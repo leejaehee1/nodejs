@@ -5,8 +5,23 @@ var dateFormat = require('dateformat'); //날짜형식을 원하는 형태로 �
 var empty = require('is-empty'); //빈값 체크 모듈 *.주의:0도 empty로 판단함
 const stringify = require("json-stringify-pretty-compact"); //json 값을 문자열로 (보기좋게)변환해주는 모듈
 var router = express.Router();
+
+const {Test} = require('../models');
+
 router.use(bodyParser.urlencoded({extended: false}));
 router.use(bodyParser.json());
+
+router.get('/test', async (req, res, next) => {
+    try {
+        const users = await Test.findAll();
+        // res.render('userManager', {users});
+        res.json({result: null, error: null, data: users});
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+
+});
 
 //전체 데이터를 불러와서 항목별로 보기 : 실제 호출주소 http://~~/api/diary/
 router.get('/', function (req, res) {
