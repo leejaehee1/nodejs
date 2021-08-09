@@ -1,15 +1,109 @@
-var express = require('express');
-var data = require('../model/diary'); //다이어리 모델 스키마를 가져온다
-var bodyParser = require('body-parser'); //body의 json을 파싱해주는 모듈
-var dateFormat = require('dateformat'); //날짜형식을 원하는 형태로 바꿔주는 모듈
-var empty = require('is-empty'); //빈값 체크 모듈 *.주의:0도 empty로 판단함
-const stringify = require("json-stringify-pretty-compact"); //json 값을 문자열로 (보기좋게)변환해주는 모듈
-var router = express.Router();
+let express = require('express');
+let data = require('../model/diary'); //다이어리 모델 스키마를 가져온다
+let bodyParser = require('body-parser'); //body의 json을 파싱해주는 모듈
+let dateFormat = require('dateformat'); //날짜형식을 원하는 형태로 바꿔주는 모듈
+let empty = require('is-empty'); //빈값 체크 모듈 *.주의:0도 empty로 판단함
 
-const {Test} = require('../models');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
+const stringify = require("json-stringify-pretty-compact"); //json 값을 문자열로 (보기좋게)변환해주는 모듈
+
+let router = express.Router();
+
+const {Test, User} = require('../models');
 
 router.use(bodyParser.urlencoded({extended: false}));
 router.use(bodyParser.json());
+
+router.post('/login', async (req, res, next) => {
+    let id = req.body.id;
+    let pw = req.body.pw;
+    if (!empty(id) && !empty(pw)) {
+        User.findOne({where: {id: id}})
+            .then(result => {
+                bcrypt.compare(pw, result.pw, (error, result) => {
+                    if (result) {
+                        res.json(result);
+                    } else {
+                        res.json(result);
+                    }
+                })
+            })
+            .catch(err => {
+                console.error(err);
+            });
+    } else {
+        res.json({result: false, error: null, data: null});
+    }
+});
+
+router.post('/register', async (req, res, next) => {
+    let id = req.body.id;
+    let pw = req.body.pw;
+    if (!empty(id) && !empty(pw)) {
+        bcrypt.hash(pw, saltRounds, (error, hash) => {
+            pw = hash;
+            User.create({id: id, pw: pw})
+                .then(result => {
+                    res.json(result);
+                })
+                .catch(err => {
+                    console.error(err);
+                });
+        })
+    } else {
+        res.json({result: false, error: null, data: null});
+    }
+});
+
+router.post('/register2', async (req, res, next) => {
+    let id = req.body.id;
+    let pw = req.body.pw;
+    if (!empty(id) && !empty(pw)) {
+        User.create({id: id, pw: pw})
+            .then(result => {
+                res.json(result);
+            })
+            .catch(err => {
+                console.error(err);
+            });
+    } else {
+        res.json({result: false, error: null, data: null});
+    }
+});
+
+router.post('/update', async (req, res, next) => {
+    let id = req.body.id;
+    let pw = req.body.pw;
+    if (!empty(id) && !empty(pw)) {
+        User.update({pw: pw}, {where: {id: id}})
+            .then(result => {
+                res.json(result);
+            })
+            .catch(err => {
+                console.error(err);
+            });
+    } else {
+        res.json({result: false, error: null, data: null});
+    }
+});
+
+router.post('/delete', async (req, res, next) => {
+    let id = req.body.id;
+    let pw = req.body.pw;
+    if (!empty(id) && !empty(pw)) {
+        User.destroy({where: {id: id}})
+            .then(result => {
+                res.json(result);
+            })
+            .catch(err => {
+                console.error(err);
+            });
+    } else {
+        res.json({result: false, error: null, data: null});
+    }
+});
 
 router.get('/test', async (req, res, next) => {
     try {
@@ -20,7 +114,6 @@ router.get('/test', async (req, res, next) => {
         console.error(error);
         next(error);
     }
-
 });
 
 //전체 데이터를 불러와서 항목별로 보기 : 실제 호출주소 http://~~/api/diary/
