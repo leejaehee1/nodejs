@@ -16,6 +16,14 @@ const {Test, User} = require('../models');
 router.use(bodyParser.urlencoded({extended: false}));
 router.use(bodyParser.json());
 
+router.get('/loginCheck', (req, res) => {
+    if (req.session.loginData) {
+        res.send({loggedIn: true, loginData: req.session.loginData})
+    } else {
+        res.send({loggedIn: false})
+    }
+})
+
 router.post('/login', async (req, res, next) => {
     let id = req.body.id;
     let pw = req.body.pw;
@@ -24,6 +32,8 @@ router.post('/login', async (req, res, next) => {
             .then(result => {
                 bcrypt.compare(pw, result.pw, (error, result) => {
                     if (result) {
+                        req.session.loginData = {id: id, pw: pw};
+                        req.session.save(error => {if(error) console.log(error)})
                         res.json(result);
                     } else {
                         res.json(result);
