@@ -1,4 +1,4 @@
-# react - node - mysql(mongodb)
+# Mern stack
 
 MongoDB -> Mysql 로 변경한 Mern stack 사용(프로토 타이핑은 이 스택을 사용하고 major 프로젝트로 승격되면 spring boot + mysql 로 변경)
 
