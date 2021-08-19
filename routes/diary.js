@@ -25,14 +25,14 @@ router.get('/loginCheck', (req, res) => {
 })
 
 router.post('/login', async (req, res, next) => {
-    let id = req.body.id;
-    let pw = req.body.pw;
-    if (!empty(id) && !empty(pw)) {
-        User.findOne({where: {id: id}})
+    let userID = req.body.userID;
+    let password = req.body.password;
+    if (!empty(userID) && !empty(password)) {
+        User.findOne({where: {userID: userID}})
             .then(result => {
-                bcrypt.compare(pw, result.pw, (error, result) => {
+                bcrypt.compare(password, result.password, (error, result) => {
                     if (result) {
-                        req.session.loginData = {id: id, pw: pw};
+                        req.session.loginData = {userID: userID, password: password};
                         req.session.save(error => {if(error) console.log(error)})
                         res.json(result);
                     } else {
@@ -49,12 +49,12 @@ router.post('/login', async (req, res, next) => {
 });
 
 router.post('/register', async (req, res, next) => {
-    let id = req.body.id;
-    let pw = req.body.pw;
-    if (!empty(id) && !empty(pw)) {
-        bcrypt.hash(pw, saltRounds, (error, hash) => {
-            pw = hash;
-            User.create({id: id, pw: pw})
+    let userID = req.body.userID;
+    let password = req.body.password;
+    if (!empty(userID) && !empty(password)) {
+        bcrypt.hash(password, saltRounds, (error, hash) => {
+            password = hash;
+            User.create({userID: userID, password: password})
                 .then(result => {
                     res.json(result);
                 })
@@ -68,10 +68,10 @@ router.post('/register', async (req, res, next) => {
 });
 
 router.post('/register2', async (req, res, next) => {
-    let id = req.body.id;
-    let pw = req.body.pw;
-    if (!empty(id) && !empty(pw)) {
-        User.create({id: id, pw: pw})
+    let userID = req.body.userID;
+    let password = req.body.password;
+    if (!empty(userID) && !empty(password)) {
+        User.create({userID: userID, password: password})
             .then(result => {
                 res.json(result);
             })
@@ -84,10 +84,10 @@ router.post('/register2', async (req, res, next) => {
 });
 
 router.post('/update', async (req, res, next) => {
-    let id = req.body.id;
-    let pw = req.body.pw;
-    if (!empty(id) && !empty(pw)) {
-        User.update({pw: pw}, {where: {id: id}})
+    let userID = req.body.userID;
+    let password = req.body.password;
+    if (!empty(id) && !empty(password)) {
+        User.update({password: password}, {where: {userID: userID}})
             .then(result => {
                 res.json(result);
             })
@@ -100,10 +100,9 @@ router.post('/update', async (req, res, next) => {
 });
 
 router.post('/delete', async (req, res, next) => {
-    let id = req.body.id;
-    let pw = req.body.pw;
-    if (!empty(id) && !empty(pw)) {
-        User.destroy({where: {id: id}})
+    let userID = req.body.userID;
+    if (!empty(userID)) {
+        User.destroy({where: {userID: userID}})
             .then(result => {
                 res.json(result);
             })
