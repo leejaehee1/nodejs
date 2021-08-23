@@ -57,7 +57,7 @@ router.post('/register', async (req, res, next) => {
             password = hash;
             User.create({userID: userID, password: password})
                 .then(result => {
-                    res.json(result);
+                    res.json({result: result, error: null, data: null});
                 })
                 .catch(err => {
                     console.error(err);
