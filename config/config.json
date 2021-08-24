@@ -1,8 +1,8 @@
 {
   "development": {
     "username": "root",
-    "password": "root",
-    "database": "test",
+    "password": "3305",
+    "database": "punch",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
