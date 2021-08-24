@@ -1,17 +1,16 @@
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('system', {
-            projectID: {
-                type: DataTypes.STRING(3),
+            system: {
+                type: DataTypes.CHAR(4),
                 primaryKey: true
             },
-            punchID: {
-                type: DataTypes.STRING(24),
-                primaryKey: true
+            systemName: {
+                type: DataTypes.STRING(100)
             },
-
         },
         {
             createdAt: false,
             updatedAt: false,
+            tableName: "system"
         });
 };

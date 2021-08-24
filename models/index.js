@@ -69,11 +69,12 @@ db.PunchLoc = require('./punchLoc')(sequelize, Sequelize);
 db.ScheduleDate = require('./scheduleDate')(sequelize, Sequelize);
 db.Stage = require('./stage')(sequelize, Sequelize);
 db.Status = require('./status')(sequelize, Sequelize);
-db.Sybsystem = require('./sybsystem')(sequelize, Sequelize);
+db.Subsystem = require('./subsystem')(sequelize, Sequelize);
 db.System = require('./system')(sequelize, Sequelize);
 db.TagNumberDetail = require('./tagNumberDetail')(sequelize, Sequelize);
 db.Unit = require('./unit')(sequelize, Sequelize);
 db.User = require('./user')(sequelize, Sequelize);
 db.UserComment = require('./userComment')(sequelize, Sequelize);
+db.PunchListLog = require('./punchListLog')(sequelize, Sequelize);
 
 module.exports = db;

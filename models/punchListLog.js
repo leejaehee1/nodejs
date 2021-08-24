@@ -1,24 +1,27 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('punchList', {
-            projectID: {
-                type: DataTypes.CHAR(3),
+    return sequelize.define('punchListLog', {
+            systemDate: {
+                type: DataTypes.DATE,
                 primaryKey: true
+            },
+            updateStatus: {
+                type: DataTypes.CHAR(1),
+                primaryKey: true
+            },
+            projectID: {
+                type: DataTypes.CHAR(3)
             },
             punchID: {
-                type: DataTypes.CHAR(24),
-                primaryKey: true
+                type: DataTypes.CHAR(24)
             },
             category: {
-                type: DataTypes.CHAR(2),
-                foreignKey: true
+                type: DataTypes.CHAR(2)
             },
             system: {
-                type: DataTypes.CHAR(4),
-                foreignKey: true
+                type: DataTypes.CHAR(4)
             },
             subsystem: {
-                type: DataTypes.CHAR(6),
-                foreignKey: true
+                type: DataTypes.CHAR(6)
             },
             discipline: {
                 type: DataTypes.CHAR(1)
@@ -39,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.CHAR(1)
             },
             bulkName: {
-                type: DataTypes.STRING(200)
+                type: DataTypes.STRING(100)
             },
             department: {
                 type: DataTypes.CHAR(3)
@@ -144,6 +147,6 @@ module.exports = (sequelize, DataTypes) => {
         {
             createdAt: false,
             updatedAt: false,
-            tableName: "punchList"
+            tableName: "punchListLog"
         });
 };

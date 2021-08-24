@@ -1,17 +1,23 @@
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('progress', {
             projectID: {
-                type: DataTypes.STRING(3),
+                type: DataTypes.CHAR(3),
                 primaryKey: true
             },
-            punchID: {
-                type: DataTypes.STRING(24),
+            predDate: {
+                type: DataTypes.DATE,
                 primaryKey: true
             },
-
+            trend: {
+                type: DataTypes.TINYINT
+            },
+            predict: {
+                type: DataTypes.STRING(20)
+            },
         },
         {
             createdAt: false,
             updatedAt: false,
+            tableName: "progress"
         });
 };

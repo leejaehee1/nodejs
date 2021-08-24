@@ -1,17 +1,19 @@
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('scheduleDate', {
-            projectID: {
-                type: DataTypes.STRING(3),
+            keyID: {
+                type: DataTypes.CHAR(20),
                 primaryKey: true
             },
-            punchID: {
-                type: DataTypes.STRING(24),
-                primaryKey: true
+            startDate: {
+                type: DataTypes.DATE
             },
-
+            finishDate: {
+                type: DataTypes.DATE
+            },
         },
         {
             createdAt: false,
             updatedAt: false,
+            tableName: "scheduleDate"
         });
 };

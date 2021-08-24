@@ -1,17 +1,23 @@
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('punchLoc', {
-            projectID: {
-                type: DataTypes.STRING(3),
+            drawingNo: {
+                type: DataTypes.CHAR(30),
                 primaryKey: true
             },
             punchID: {
-                type: DataTypes.STRING(24),
+                type: DataTypes.CHAR(24),
                 primaryKey: true
             },
-
+            xPixel: {
+                type: DataTypes.INTEGER
+            },
+            yPixel: {
+                type: DataTypes.INTEGER
+            },
         },
         {
             createdAt: false,
             updatedAt: false,
+            tableName: "punchLoc"
         });
 };

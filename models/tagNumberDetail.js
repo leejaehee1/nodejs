@@ -1,17 +1,30 @@
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('tagNumberDetail', {
-            projectID: {
-                type: DataTypes.STRING(3),
+            tagNumber: {
+                type: DataTypes.STRING(30),
                 primaryKey: true
             },
-            punchID: {
-                type: DataTypes.STRING(24),
+            system: {
+                type: DataTypes.CHAR(4),
                 primaryKey: true
             },
-
+            subsystem: {
+                type: DataTypes.CHAR(4),
+                primaryKey: true
+            },
+            unit: {
+                type: DataTypes.STRING(20)
+            },
+            area: {
+                type: DataTypes.STRING(20)
+            },
+            discipline: {
+                type: DataTypes.CHAR(1)
+            },
         },
         {
             createdAt: false,
             updatedAt: false,
+            tableName: "tagNumberDetail"
         });
 };

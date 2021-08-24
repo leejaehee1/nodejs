@@ -1,17 +1,25 @@
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('status', {
-            projectID: {
-                type: DataTypes.STRING(3),
+            status: {
+                type: DataTypes.CHAR(1),
                 primaryKey: true
             },
-            punchID: {
-                type: DataTypes.STRING(24),
-                primaryKey: true
+            statusName: {
+                type: DataTypes.STRING(30)
             },
-
+            shortName: {
+                type: DataTypes.STRING(20)
+            },
+            authority: {
+                type: DataTypes.CHAR(1)
+            },
+            remarks: {
+                type: DataTypes.STRING(60)
+            },
         },
         {
             createdAt: false,
             updatedAt: false,
+            tableName: "status"
         });
 };
