@@ -20,7 +20,6 @@ router.use(bodyParser.urlencoded({extended: false}));
 router.use(bodyParser.json());
 
 router.get('/loginCheck', (req, res) => {
-    console.log('asdf')
     if (req.session.loginData) {
         res.send({loggedIn: true, loginData: req.session.loginData})
     } else {
