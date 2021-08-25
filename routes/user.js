@@ -12,16 +12,24 @@ let router = express.Router();
 
 const {User} = require('../models');
 
+// testimport DB // king
+const { authority } = require('../models');
+
+
 router.use(bodyParser.urlencoded({extended: false}));
 router.use(bodyParser.json());
 
 router.get('/loginCheck', (req, res) => {
+    console.log('asdf')
     if (req.session.loginData) {
         res.send({loggedIn: true, loginData: req.session.loginData})
     } else {
         res.send({loggedIn: false})
     }
 })
+
+
+
 
 router.post('/login', async (req, res, next) => {
     let userID = req.body.userID;
@@ -99,5 +107,25 @@ router.post('/delete', async (req, res, next) => {
         res.json({result: false, error: null, data: null});
     }
 });
+
+
+
+
+// king test
+// 따로 분리된 .js 파일을 만들어야함.
+
+router.get('/authority', (req, res) => {
+    console.log(req.body)
+    console.log("들어온다")
+    // authority.findOne({ where : { authName : 'QC'}
+    // })
+    authority.findAll({
+        attributes: ['authority', 'authName', 'remarks']
+    })
+    .then(result => {
+        res.json({result, test: "test", error: null})
+    })
+})
+
 
 module.exports = router;
