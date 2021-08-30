@@ -12,6 +12,8 @@ let router = express.Router();
 // testimport DB // king
 const { authority } = require('../models');
 const { PunchList } = require('../models');
+const { status } = require('../models');
+// const status = require('../models/status');
 
 
 router.use(bodyParser.urlencoded({extended: false}));
@@ -38,6 +40,21 @@ router.get('/authority', (req, res) => {
     )});
 })
 
+
+router.get('/status', (req, res) => {
+    status.findAll({
+        attributes: [ 'status', 'statusName', 'shortName', 'authority', 'remarks']
+    })
+    .then(result => {
+        // res.json({"data":result, test: "test", error: null})
+        // console.log(result.body)
+        res.json(result)
+    })
+    .catch(err => {
+        console.error(err);
+        res.json({error: null}
+    )});
+})
 
 router.get('/list', (req, res) => {
     const queyRangeString = req.query.range
