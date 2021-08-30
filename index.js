@@ -5,6 +5,8 @@ const cors = require('cors');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const router = require("./routes/user"); //라우터 모듈 등록 (라우터 모듈안에 다이어리 스키마 모듈을 불러오고 있으므로 아래와 같이 라우터만!
+const punchListRouter = require("./routes/punchList"); 
+const summuryRouter = require("./routes/summury"); 
 let sequelize = require('./models/index').sequelize;
 let app = express();
 sequelize.sync();
@@ -28,6 +30,8 @@ app.use(
 app
     .use(express.static(path.join(__dirname, 'public')))
     .use('/api/', router)
+    .use('/punchlist/', punchListRouter)
+    .use('/summury/', summuryRouter)
     .set('views', path.join(__dirname, 'views'))
     .set('view engine', 'ejs')
     .get('/', (req, res) => res.render('pages/index'))
