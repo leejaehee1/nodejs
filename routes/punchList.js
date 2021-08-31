@@ -34,20 +34,12 @@ router.get('/authority', (req, res) => {
         attributes: [ 'authority', 'authName', 'remarks'],
         offset: offset,
         limit: limit,
-        // attributes: [ 'authority', 'authName']
-        // where: { id: [1]}
     })
-    .then(result => {
-        console.log(result)
 
-    })
     .then(result => {
-        // res.header("Content-Range", `getProducts 0-4/${result.length}`);
         res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
-        res.send(result);
-        // res.json({"data":result, test: "test", error: null})
-
+        res.json({result, resultID: "authority", error: null})
     })
     .catch(err => {
         res.json({error: err}
@@ -88,6 +80,10 @@ router.get('/list', (req, res) => {
          offset: offset,
          limit: limit,
     })
+    // .then(result => {
+    //     console.log(result)
+
+    // })
     .then(result => {
         // res.header("Content-Range", `getProducts 0-4/${result.length}`);
         res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
