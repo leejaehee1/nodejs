@@ -10,6 +10,7 @@ const stringify = require("json-stringify-pretty-compact"); //json 값을 문자
 let router = express.Router();
 
 // testimport DB // king
+const { project } = require('../models');
 const { authority } = require('../models');
 const { PunchList } = require('../models');
 const { status } = require('../models');
@@ -22,6 +23,29 @@ router.use(bodyParser.json());
 
 // king test
 // 따로 분리된 .js 파일을 만들어야함.
+router.get('/project', (req, res) => {
+    const queyRangeString = req.query.range
+    const startSetString = queyRangeString.indexOf('[')
+    const midSetString = queyRangeString.indexOf(',')
+    const endSetString = queyRangeString.indexOf(']')
+    const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
+    const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
+    project.findAll({
+        attributes: [ 'projectID', 'projectName', 'startDate', 'endDate', 'activated'],
+        offset: offset,
+        limit: limit,
+    })
+
+    .then(result => {
+        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Access-Control-Expose-Headers', 'Content-Range')
+        res.json({result, resultID: "projectID", error: null})
+    })
+    .catch(err => {
+        res.json({error: err}
+    )});
+})
+
 
 router.get('/authority', (req, res) => {
     const queyRangeString = req.query.range
