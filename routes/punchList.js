@@ -15,6 +15,9 @@ const { status } = require('../models');
 const { authority } = require('../models');
 const { discipline } = require('../models');
 const { category } = require('../models');
+const { department } = require('../models');
+
+
 const { PunchList } = require('../models');
 
 
@@ -134,6 +137,30 @@ router.get('/category', (req, res) => {
         res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
         res.json({result, resultID: "category", error: null})
+    })
+    .catch(err => {
+        res.json({error: err}
+    )});
+})
+
+
+router.get('/department', (req, res) => {
+    const queyRangeString = req.query.range
+    const startSetString = queyRangeString.indexOf('[')
+    const midSetString = queyRangeString.indexOf(',')
+    const endSetString = queyRangeString.indexOf(']')
+    const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
+    const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
+    department.findAll({
+        attributes: [ 'department', 'deptName', 'shortName'],
+        offset: offset,
+        limit: limit,
+    })
+
+    .then(result => {
+        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Access-Control-Expose-Headers', 'Content-Range')
+        res.json({result, resultID: "department", error: null})
     })
     .catch(err => {
         res.json({error: err}
