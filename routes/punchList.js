@@ -13,6 +13,7 @@ let router = express.Router();
 const { project } = require('../models');
 const { status } = require('../models');
 const { authority } = require('../models');
+const { discipline } = require('../models');
 const { PunchList } = require('../models');
 
 
@@ -89,6 +90,33 @@ router.get('/authority', (req, res) => {
         res.json({error: err}
     )});
 })
+
+
+router.get('/discipline', (req, res) => {
+    const queyRangeString = req.query.range
+    const startSetString = queyRangeString.indexOf('[')
+    const midSetString = queyRangeString.indexOf(',')
+    const endSetString = queyRangeString.indexOf(']')
+    const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
+    const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
+    discipline.findAll({
+        attributes: [ 'discipline', 'disciplineName', 'shortName'],
+        offset: offset,
+        limit: limit,
+    })
+
+    .then(result => {
+        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Access-Control-Expose-Headers', 'Content-Range')
+        res.json({result, resultID: "discipline", error: null})
+    })
+    .catch(err => {
+        res.json({error: err}
+    )});
+})
+
+
+
 
 
 router.get('/list', (req, res) => {
