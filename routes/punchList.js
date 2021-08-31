@@ -17,6 +17,7 @@ const { discipline } = require('../models');
 const { category } = require('../models');
 const { department } = require('../models');
 const { system } = require('../models');
+const { subsystem } = require('../models');
 
 
 const { PunchList } = require('../models');
@@ -192,6 +193,29 @@ router.get('/system', (req, res) => {
     )});
 })
 
+
+router.get('/subsystem', (req, res) => {
+    const queyRangeString = req.query.range
+    const startSetString = queyRangeString.indexOf('[')
+    const midSetString = queyRangeString.indexOf(',')
+    const endSetString = queyRangeString.indexOf(']')
+    const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
+    const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
+    subsystem.findAll({
+        attributes: [ 'subsystem', 'subsystemName'],
+        offset: offset,
+        limit: limit,
+    })
+
+    .then(result => {
+        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Access-Control-Expose-Headers', 'Content-Range')
+        res.json({result, resultID: "subsystem", error: null})
+    })
+    .catch(err => {
+        res.json({error: err}
+    )});
+})
 
 
 router.get('/list', (req, res) => {
