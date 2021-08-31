@@ -21,6 +21,7 @@ const { subsystem } = require('../models');
 const { user } = require('../models');
 const { unit } = require('../models');
 const { area } = require('../models');
+const { drawing } = require('../models');
 
 
 const { PunchList } = require('../models');
@@ -289,6 +290,28 @@ router.get('/area', (req, res) => {
     )});
 })
 
+
+router.get('/drawing', (req, res) => {
+    const queyRangeString = req.query.range
+    const startSetString = queyRangeString.indexOf('[')
+    const midSetString = queyRangeString.indexOf(',')
+    const endSetString = queyRangeString.indexOf(']')
+    const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
+    const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
+    drawing.findAll({
+        attributes: [ 'projectID', 'system', 'subsystem', 'seq', 'drawingNo', 'uploadDate', 'imagePath', 'xSize', 'ySize'],
+        offset: offset,
+        limit: limit,
+    })
+    .then(result => {
+        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Access-Control-Expose-Headers', 'Content-Range')
+        res.json({result, resultID: "projectID", error: null})
+    })
+    .catch(err => {
+        res.json({error: err}
+    )});
+})
 
 router.get('/list', (req, res) => {
     const queyRangeString = req.query.range
