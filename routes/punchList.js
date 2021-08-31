@@ -24,19 +24,33 @@ router.use(bodyParser.json());
 // 따로 분리된 .js 파일을 만들어야함.
 
 router.get('/authority', (req, res) => {
+    const queyRangeString = req.query.range
+    const startSetString = queyRangeString.indexOf('[')
+    const midSetString = queyRangeString.indexOf(',')
+    const endSetString = queyRangeString.indexOf(']')
+    const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
+    const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
     authority.findAll({
-        // attributes: [ 'authority', 'authName', 'remarks']
-        attributes: [ 'authority', 'authName']
+        attributes: [ 'authority', 'authName', 'remarks'],
+        offset: offset,
+        limit: limit,
+        // attributes: [ 'authority', 'authName']
         // where: { id: [1]}
     })
     .then(result => {
+        console.log(result)
+
+    })
+    .then(result => {
+        // res.header("Content-Range", `getProducts 0-4/${result.length}`);
+        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Access-Control-Expose-Headers', 'Content-Range')
+        res.send(result);
         // res.json({"data":result, test: "test", error: null})
-        // console.log(result.body)
-        res.json(result)
+
     })
     .catch(err => {
-        console.error(err);
-        res.json({error: null}
+        res.json({error: err}
     )});
 })
 
@@ -78,7 +92,9 @@ router.get('/list', (req, res) => {
         // res.header("Content-Range", `getProducts 0-4/${result.length}`);
         res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
-        res.send(result);
+        // res.send(result);
+        res.json({result, resultID: "punchID", error: null})
+
     })
     .catch(err => {
         res.json({error: null}
