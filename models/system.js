@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('system', {
-            system: {
+    return sequelize.define('systems', {
+            systems: {
                 type: DataTypes.CHAR(4),
                 primaryKey: true
             },
@@ -11,6 +11,6 @@ module.exports = (sequelize, DataTypes) => {
         {
             createdAt: false,
             updatedAt: false,
-            tableName: "system"
+            tableName: "systems"
         });
 };
