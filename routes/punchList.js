@@ -16,7 +16,7 @@ const { authority } = require('../models');
 const { discipline } = require('../models');
 const { category } = require('../models');
 const { department } = require('../models');
-const { system } = require('../models');
+const { systems } = require('../models');
 const { subsystem } = require('../models');
 const { user } = require('../models');
 const { unit } = require('../models');
@@ -174,15 +174,15 @@ router.get('/department', (req, res) => {
 })
 
 
-router.get('/system', (req, res) => {
+router.get('/systems', (req, res) => {
     const queyRangeString = req.query.range
     const startSetString = queyRangeString.indexOf('[')
     const midSetString = queyRangeString.indexOf(',')
     const endSetString = queyRangeString.indexOf(']')
     const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
     const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
-    system.findAll({
-        attributes: [ 'system', 'systemName'],
+    systems.findAll({
+        attributes: [ 'systemID', 'systemName'],
         offset: offset,
         limit: limit,
     })
@@ -190,7 +190,7 @@ router.get('/system', (req, res) => {
     .then(result => {
         res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
-        res.json({result, resultID: "system", error: null})
+        res.json({result, resultID: "systemID", error: null})
     })
     .catch(err => {
         res.json({error: err}

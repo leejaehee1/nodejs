@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('systems', {
-            systems: {
+            systemID: {
                 type: DataTypes.CHAR(4),
                 primaryKey: true
             },
@@ -14,3 +14,5 @@ module.exports = (sequelize, DataTypes) => {
             tableName: "systems"
         });
 };
+// UL
+// Structures for steam. water. gas cycles
