@@ -10,7 +10,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 
-const {User} = require('../models');
+const {User, Category} = require('../models');
 
 
 
@@ -25,9 +25,9 @@ const { department } = require('../models');
 const { systems } = require('../models');
 const { subsystem } = require('../models');
 const { discipline } = require('../models');
-const { punchList } = require('../models');
+const { punchlist } = require('../models');
 
-
+const { Op, where } = require("sequelize");
 router.use(bodyParser.urlencoded({extended: false}));
 router.use(bodyParser.json());
 
@@ -80,7 +80,7 @@ router.get('/category', (req, res) => {
 
 router.get('/systems', (req, res) => {
     systems.findAll({
-        attributes: [ 'systems', 'systemName']
+        attributes: [ 'systemID', 'systemName']
         // where: { id: [1]}
     })
     .then(result => {
@@ -130,12 +130,8 @@ router.get('/discipline', (req, res) => {
 
 router.get('/sqlall', (req, res) => {
     
-    punchList.findAll({
-        attributes: [`projectID`, `punchID`, `category`, `system`, `subsystem`, `discipline`, `status`, `unit`, `area`, 
-        `tagNumber`, `bulkItem`, `bulkName`, `department`, `targetDate`, `issuedDate`, `issuedBy`, `raisedBy`, `completedDate`, 
-        `completedBy`, `confirmedDate`, `confirmedBy`, `closedDate`, `closedBy`, `scheduleKey`, `scheStartDate`, `scheFinishDate`,
-         `designChgReq`, `materialReq`, `issueDescription`, `completeComment`, `notAcceptComment`, `difficulty`, `scheduleImpact`, 
-         `costImpact`, `keyword2`, `keyword3`, `keyword4`, `drawingNo`, `awpCode`]
+    punchlist.findAll({
+        attributes: ['issuedBy', `punchID`, `category`,  `status`, 'discipline','unit','area','systemID']
     })
     
     .then(result => {
@@ -149,12 +145,12 @@ router.get('/sqlall', (req, res) => {
     )});
 })
 
-router.get('/sqlqc', (req, res) => {
-    // var issuedBys = req.query.issuedBy;
-    
+router.post('/sqlqc', (req, res) => {
+    let userID = req.body.userID;
     punchlist.findAll({
-        where:{"issuedBy":2},
-        attributes: [`projectID`, `punchID`, `category`,"issuedBy"]
+        where:{issuedBy:userID},
+        
+        attributes: ['issuedBy', `punchID`, `category`,  `status`, 'discipline','unit','area','systemID']
     })
     
     .then(result => {
@@ -168,12 +164,36 @@ router.get('/sqlqc', (req, res) => {
     )});
 })
 
-router.get('/sqlassi', (req, res) => {
-    var issuedBy = req.query.issuedBy;
-
+router.post('/sqlassi', (req, res) => {
+    
+    let userID = req.body.userID;
+    // let category = req.body.category;
+// punchList.query('SELECT * FROM punchlist as A , category as B, discipline as C, systems as D',
+// 'where A.category = B.category',
+// 'and A.discipline = C.discipline',
+// 'and A.system = D.systems')
     punchlist.findAll({
-        where:{issuedBy:issuedBy,'status':2},
-        attributes: [`projectID`, `punchID`, `category`,"issuedBy"]
+        // include: [
+        //     {
+        //       model: category,
+          
+        //     //   attributes: ['category','categoryName'],
+        //     }
+        //  ],
+        
+        where:{
+            [Op.or]:[
+
+            {issuedBy:userID},
+
+            {status:{[Op.or]:[2,5]}}]
+            ,
+            // category:category['category'],
+            // discipline:discipline['discipline'],
+            // system:systems['systems'],
+        },
+            
+        attributes: [ 'issuedBy', `status`, `punchID`, `category`, 'discipline','unit','area','systemID']
     })
     
     .then(result => {

@@ -13,8 +13,7 @@ let router = express.Router();
 const {User} = require('../models');
 
 // testimport DB // king
-const { authority } = require('../models');
-const { PunchList } = require('../models');
+
 
 
 router.use(bodyParser.urlencoded({extended: false}));
@@ -36,16 +35,19 @@ router.post('/login', async (req, res, next) => {
     let password = req.body.password;
     if (!empty(userID) && !empty(password)) {
         User.findOne({where: {userID: userID}})
-            .then(result => {
-                bcrypt.compare(password, result.password, (error, result) => {
+            .then(results => {
+                bcrypt.compare(password, results.password, (error, result) => {
                     if (result) {
                         req.session.loginData = {userID: userID, password: password};
                         req.session.save(error => {
                             if (error) console.log(error)
                         })
-                        res.json(result);
+                        res.send(results);
+                        
+                        // res.json(result);
                     } else {
-                        res.json(result);
+                        // res.json(result);
+                        res.json({result: false, error: null, data: null});
                     }
                 })
             })
@@ -60,10 +62,27 @@ router.post('/login', async (req, res, next) => {
 router.post('/register', async (req, res, next) => {
     let userID = req.body.userID;
     let password = req.body.password;
+    let userName = req.body.userName;
+    let email = req.body.email;
+    const company = req.body.company;
+    const authority = req.body.authority;
+    const personalID = req.body.personalID;
+    const department = req.body.department;
+    const active = req.body.active;
     if (!empty(userID) && !empty(password)) {
         bcrypt.hash(password, saltRounds, (error, hash) => {
             password = hash;
-            User.create({userID: userID, password: password})
+            User.create({
+                userID: userID, 
+                password: password,
+                userName:userName,
+                email:email,
+                company:company,
+                authority:authority,
+                personalID:personalID,
+                department:department,
+                active:active,
+            })
                 .then(result => {
                     res.json({result: result, error: null, data: null});
                 })
@@ -76,6 +95,7 @@ router.post('/register', async (req, res, next) => {
         res.json({result: false, error: null, data: null});
     }
 });
+
 
 router.post('/update', async (req, res, next) => {
     let userID = req.body.userID;

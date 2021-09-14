@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('user', {
+    return sequelize.define('users', {
             userID: {
                 type: DataTypes.CHAR(12),
                 primaryKey: true
@@ -32,6 +32,6 @@ module.exports = (sequelize, DataTypes) => {
         {
             createdAt: false,
             updatedAt: false,
-            tableName: "user"
+            tableName: "users"
         });
 };

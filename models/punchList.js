@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('punchList', {
+    return sequelize.define('punchlist', {
             projectID: {
                 type: DataTypes.CHAR(3),
                 primaryKey: true
@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.CHAR(2),
                 foreignKey: true
             },
-            system: {
+            systemID: {
                 type: DataTypes.CHAR(4),
                 foreignKey: true
             },
@@ -144,6 +144,6 @@ module.exports = (sequelize, DataTypes) => {
         {
             createdAt: false,
             updatedAt: false,
-            tableName: "punchList"
+            tableName: "punchlist"
         });
 };
