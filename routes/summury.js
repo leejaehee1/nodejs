@@ -28,6 +28,18 @@ const { discipline } = require('../models');
 const { punchlist } = require('../models');
 
 const { Op, where } = require("sequelize");
+
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+    host:'127.0.0.1',
+    user: 'root',
+    password:'root',
+    database: 'punch',
+});
+
+
+
+
 router.use(bodyParser.urlencoded({extended: false}));
 router.use(bodyParser.json());
 
@@ -127,87 +139,145 @@ router.get('/discipline', (req, res) => {
 })
 
 
+// const sql = 'SELECT * FROM punch.punchlist'
+const sql = 'SELECT * FROM punch.punchlist as A , punch.category as B, punch.discipline as C, punch.systems as D'
+// 'SELECT punch.punchlist.issuedBy, punch.punchlist.punchID, punch.punchlist.category,  punch.punchlist.status, punch.punchlist.discipline,punch.punchlist.unit,punch.punchlist.area,punch.punchlist.systemID,punch.punchlist.categoryName,punch.punchlist.disciplineName,punch.punchlist.shortName,punch.punchlist.systemName FROM punch.punchlist as A , punch.category as B, punch.discipline as C, punch.systems as D where A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID'
 
+// connection.connect();
+
+// connection.query('SELECT * FROM punch.punchlist', function(error,results){
+//     if (error){
+//         console.log(error);
+//     }
+//     console.log(results);
+// });
+// connection.end();
+
+router.get('/sqltest', (req, res) => {
+    connection.query(sql + ' where A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID', function(error,results){
+        if (error){
+            console.log(error);
+        }
+        res.json(results);
+    });
+    
+})
+
+
+
+// router.get('/sqlall', (req, res) => {
+    
+//     punchlist.findAll({
+//         attributes: ['issuedBy', `punchID`, `category`,  `status`, 'discipline','unit','area','systemID','categoryName','disciplineName','shortName','systemName']
+//     })
+    
+//     .then(result => {
+//         // res.json({"data":result, test: "test", error: null})
+//         console.log(result.body)
+//         res.json(result)
+//     })
+//     .catch(err => {
+//         console.error(err);
+//         res.json({error: null}
+//     )});
+// })
 router.get('/sqlall', (req, res) => {
     
-    punchlist.findAll({
-        attributes: ['issuedBy', `punchID`, `category`,  `status`, 'discipline','unit','area','systemID']
-    })
-    
-    .then(result => {
-        // res.json({"data":result, test: "test", error: null})
-        console.log(result.body)
-        res.json(result)
-    })
-    .catch(err => {
-        console.error(err);
-        res.json({error: null}
-    )});
+    connection.query(sql+' where A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID', function(error,results){
+        if (error){
+            console.log(error);
+        }
+        res.json(results);
+    });
 })
+
+// router.post('/sqlqc', (req, res) => {
+//     let userID = req.body.userID;
+//     punchlist.findAll({
+//         where:{issuedBy:userID},
+        
+//         attributes: ['issuedBy', `punchID`, `category`,  `status`, 'discipline','unit','area','systemID']
+//     })
+    
+//     .then(result => {
+//         // res.json({"data":result, test: "test", error: null})
+//         console.log(result.body)
+//         res.json(result)
+//     })
+//     .catch(err => {
+//         console.error(err);
+//         res.json({error: null}
+//     )});
+// })
 
 router.post('/sqlqc', (req, res) => {
     let userID = req.body.userID;
-    punchlist.findAll({
-        where:{issuedBy:userID},
-        
-        attributes: ['issuedBy', `punchID`, `category`,  `status`, 'discipline','unit','area','systemID']
-    })
-    
-    .then(result => {
-        // res.json({"data":result, test: "test", error: null})
-        console.log(result.body)
-        res.json(result)
-    })
-    .catch(err => {
-        console.error(err);
-        res.json({error: null}
-    )});
+    connection.query(sql+' where A.issuedBy=? and A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID',[userID], function(error,results){
+        if (error){
+            console.log(error);
+        }
+        res.json(results);
+    });
 })
+
+// router.post('/sqlassi', (req, res) => {
+    
+//     let userID = req.body.userID;
+//     // let category = req.body.category;
+// // punchList.query('SELECT * FROM punchlist as A , category as B, discipline as C, systems as D',
+// // 'where A.category = B.category',
+// // 'and A.discipline = C.discipline',
+// // 'and A.system = D.systems')
+//     punchlist.findAll({
+//         // include: [
+//         //     {
+//         //       model: category,
+          
+//         //     //   attributes: ['category','categoryName'],
+//         //     }
+//         //  ],
+        
+//         where:{
+//             [Op.or]:[
+
+//             {issuedBy:userID},
+
+//             {status:{[Op.or]:[2,5]}}]
+//             ,
+//             // category:category['category'],
+//             // discipline:discipline['discipline'],
+//             // system:systems['systems'],
+//         },
+            
+//         attributes: [ 'issuedBy', `status`, `punchID`, `category`, 'discipline','unit','area','systemID']
+//     })
+    
+//     .then(result => {
+//         // res.json({"data":result, test: "test", error: null})
+//         console.log(result.body)
+//         res.json(result)
+//     })
+//     .catch(err => {
+//         console.error(err);
+//         res.json({error: null}
+//     )});
+// })
 
 router.post('/sqlassi', (req, res) => {
     
     let userID = req.body.userID;
-    // let category = req.body.category;
-// punchList.query('SELECT * FROM punchlist as A , category as B, discipline as C, systems as D',
-// 'where A.category = B.category',
-// 'and A.discipline = C.discipline',
-// 'and A.system = D.systems')
-    punchlist.findAll({
-        // include: [
-        //     {
-        //       model: category,
-          
-        //     //   attributes: ['category','categoryName'],
-        //     }
-        //  ],
-        
-        where:{
-            [Op.or]:[
-
-            {issuedBy:userID},
-
-            {status:{[Op.or]:[2,5]}}]
-            ,
-            // category:category['category'],
-            // discipline:discipline['discipline'],
-            // system:systems['systems'],
-        },
-            
-        attributes: [ 'issuedBy', `status`, `punchID`, `category`, 'discipline','unit','area','systemID']
-    })
-    
-    .then(result => {
-        // res.json({"data":result, test: "test", error: null})
-        console.log(result.body)
-        res.json(result)
-    })
-    .catch(err => {
-        console.error(err);
-        res.json({error: null}
-    )});
+    connection.query(sql+' where (status = ? or status = ? or A.issuedBy = ?) and A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID',['2','5',userID], function(error,results){
+        if (error){
+            console.log(error);
+        }
+        res.json(results);
+    });
 })
 
-
+// status = '2'
+// or status = '5'
+// and A.issuedBy = B.userID
+// and B.userID = 'user1';
 
 
 
