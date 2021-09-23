@@ -18,7 +18,7 @@ const { category } = require('../models');
 const { department } = require('../models');
 const { systems } = require('../models');
 const { subsystem } = require('../models');
-const { user } = require('../models');
+const { users } = require('../models');
 const { unit } = require('../models');
 const { area } = require('../models');
 const { drawing } = require('../models');
@@ -229,7 +229,7 @@ router.get('/usercode', (req, res) => {
     const endSetString = queyRangeString.indexOf(']')
     const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
     const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
-    user.findAll({
+    users.findAll({
         attributes: [ 'userID', 'password', 'userName', 'email', 'company', 'authority', 'personalID', 'department', 'active'],
         offset: offset,
         limit: limit,
@@ -311,6 +311,15 @@ router.get('/drawing', (req, res) => {
     .catch(err => {
         res.json({error: err}
     )});
+})
+
+router.put('/list/:id', (req, res) => {
+    const targetID = req.params.id // url을 넣는다.
+    const cateData = req.body.status
+    PunchList.update(
+        { status: cateData },
+        { where: {punchID: targetID} }
+    ).then(res.json({result:"succ!"}))
 })
 
 router.get('/list', (req, res) => {
