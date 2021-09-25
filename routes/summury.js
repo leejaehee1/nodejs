@@ -305,7 +305,7 @@ router.post('/login', async (req, res, next) => {
                     if (result) {
                         req.session.loginData = {userID: userID, password: password};
                         req.session.save(error => {
-                            if (error) console.log(error)
+                            if (error)res.json({result: false, error: null, data: null});
                         })
                         res.send(results);
                         
