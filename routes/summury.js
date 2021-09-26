@@ -310,7 +310,9 @@ router.post('/login', async (req, res, next) => {
                         res.send(results);
                         
                         // res.json(result);
-                    } else {
+                    } 
+                    
+                    else {
                         // res.json(result);
                         res.json({result: false, error: null, data: null});
                     }
@@ -377,6 +379,77 @@ router.post('/update', async (req, res, next) => {
         res.json({result: false, error: null, data: null});
     }
 });
+
+// router.post('/update', async (req, res, next) => {
+//     let userID = req.body.userID;
+//         let password = req.body.password;
+//         let userName = req.body.userName;
+//         let email = req.body.email;
+//         const company = req.body.company;
+//         const authority = req.body.authority;
+//         const personalID = req.body.personalID;
+//         const department = req.body.department;
+//         const active = req.body.active;
+//         var sql = 'UPDATE users SET password=?,userName=?,email=?,company=?,authority=?,personalID=?,department=? WHERE userID = ?';
+//         connection.query(sql,[password,userName,email,company,authority,personalID,department,userID],function(err,results){
+//             if(err) console.log("err : "+err);
+//             console.log(results);
+//             res.json(results);
+//             res.render('edit', {results: results});
+//         });
+// });
+
+// router.post('/update', async (req, res, next) => {
+//     let userID = req.body.userID;
+//         let password = req.body.password;
+//         let userName = req.body.userName;
+//         let email = req.body.email;
+//         const company = req.body.company;
+//         const authority = req.body.authority;
+//         const personalID = req.body.personalID;
+//         const department = req.body.department;
+//         const active = req.body.active;
+//         User.update({                 // update
+//             password:'password',
+//           }, {
+//             where:{userID:userID}
+//           });
+// });
+
+// router.post('/update', async (req, res, next) => {
+//     let userID = req.body.userID;
+//     let password = req.body.password;
+//     let userName = req.body.userName;
+//     let email = req.body.email;
+//     const company = req.body.company;
+//     const authority = req.body.authority;
+//     const personalID = req.body.personalID;
+//     const department = req.body.department;
+//     const active = req.body.active;
+
+//     User.findOne({where: {userID: userID}})
+//     if (!empty(userID)) {
+//         User.update({
+//             userID: userID, 
+//             password: password,
+//             userName:userName,
+//             email:email,
+//             company:company,
+//             authority:authority,
+//             personalID:personalID,
+//             department:department,
+//             active:active,
+//         })
+//             .then(result => {
+//                 res.json(result);
+//             })
+//             .catch(err => {
+//                 console.error(err);
+//             });
+//     } else {
+//         res.json({result: false, error: null, data: null});
+//     }
+// });
 
 router.post('/delete', async (req, res, next) => {
     let userID = req.body.userID;
