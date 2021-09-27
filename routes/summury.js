@@ -140,7 +140,7 @@ router.get('/discipline', (req, res) => {
 
 
 // const sql = 'SELECT * FROM punch.punchlist'
-const sql = 'SELECT * FROM punch.punchlist as A , punch.category as B, punch.discipline as C, punch.systems as D'
+const sql = 'SELECT * FROM punch.punchlist as A , punch.category as B, punch.discipline as C, punch.systems as D, punch.subsystem as E'
 // 'SELECT punch.punchlist.issuedBy, punch.punchlist.punchID, punch.punchlist.category,  punch.punchlist.status, punch.punchlist.discipline,punch.punchlist.unit,punch.punchlist.area,punch.punchlist.systemID,punch.punchlist.categoryName,punch.punchlist.disciplineName,punch.punchlist.shortName,punch.punchlist.systemName FROM punch.punchlist as A , punch.category as B, punch.discipline as C, punch.systems as D where A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID'
 
 // connection.connect();
@@ -154,7 +154,7 @@ const sql = 'SELECT * FROM punch.punchlist as A , punch.category as B, punch.dis
 // connection.end();
 
 router.get('/sqltest', (req, res) => {
-    connection.query(sql + ' where A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID', function(error,results){
+    connection.query(sql + ' where A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID and A.subsystemName = E.subsystemName', function(error,results){
         if (error){
             console.log(error);
         }
@@ -183,7 +183,7 @@ router.get('/sqltest', (req, res) => {
 // })
 router.get('/sqlall', (req, res) => {
     
-    connection.query(sql+' where A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID', function(error,results){
+    connection.query(sql+' where A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID and A.subsystem = E.subsystem', function(error,results){
         if (error){
             console.log(error);
         }
@@ -212,7 +212,7 @@ router.get('/sqlall', (req, res) => {
 
 router.post('/sqlqc', (req, res) => {
     let userID = req.body.userID;
-    connection.query(sql+' where A.issuedBy=? and A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID',[userID], function(error,results){
+    connection.query(sql+' where A.issuedBy=? and A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID and A.subsystem = E.subsystem',[userID], function(error,results){
         if (error){
             console.log(error);
         }
@@ -266,7 +266,7 @@ router.post('/sqlqc', (req, res) => {
 router.post('/sqlassi', (req, res) => {
     
     let userID = req.body.userID;
-    connection.query(sql+' where (status = ? or status = ? or A.issuedBy = ?) and A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID',['2','5',userID], function(error,results){
+    connection.query(sql+' where ((status = ? or status = ?) or A.issuedBy = ?) and A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID and A.subsystem = E.subsystem',['2','5',userID], function(error,results){
         if (error){
             console.log(error);
         }
@@ -274,10 +274,23 @@ router.post('/sqlassi', (req, res) => {
     });
 })
 
-// status = '2'
-// or status = '5'
-// and A.issuedBy = B.userID
-// and B.userID = 'user1';
+router.post('/complete', async (req, res, next) => {
+  let userID = req.body.userID;
+  let projectID = req.body.projectID;
+  let punchID = req.body.punchID;
+  let completedDate = req.body.completedDate;
+  if (!empty(projectID) && !empty(punchID)) {
+    punchlist.update({completedDate: completedDate,completedBy:userID,status:'3'}, {where: {projectID: projectID, punchID: punchID}})
+      .then(result => {
+        res.json(result);
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  } else {
+    res.json({result: false, error: null, data: null});
+  }
+});
 
 
 
@@ -305,14 +318,12 @@ router.post('/login', async (req, res, next) => {
                     if (result) {
                         req.session.loginData = {userID: userID, password: password};
                         req.session.save(error => {
-                            if (error)res.json({result: false, error: null, data: null});
+                            if (error) console.log(error)
                         })
                         res.send(results);
                         
                         // res.json(result);
-                    } 
-                    
-                    else {
+                    } else {
                         // res.json(result);
                         res.json({result: false, error: null, data: null});
                     }
@@ -368,88 +379,20 @@ router.post('/update', async (req, res, next) => {
     let userID = req.body.userID;
     let password = req.body.password;
     if (!empty(userID) && !empty(password)) {
-        User.update({password: password}, {where: {userID: userID}})
+        bcrypt.hash(password, saltRounds, (error, hash) => {
+            password = hash;
+            User.update({password: password}, {where: {userID: userID}})
             .then(result => {
                 res.json(result);
             })
             .catch(err => {
                 console.error(err);
             });
+        })
     } else {
         res.json({result: false, error: null, data: null});
     }
 });
-
-// router.post('/update', async (req, res, next) => {
-//     let userID = req.body.userID;
-//         let password = req.body.password;
-//         let userName = req.body.userName;
-//         let email = req.body.email;
-//         const company = req.body.company;
-//         const authority = req.body.authority;
-//         const personalID = req.body.personalID;
-//         const department = req.body.department;
-//         const active = req.body.active;
-//         var sql = 'UPDATE users SET password=?,userName=?,email=?,company=?,authority=?,personalID=?,department=? WHERE userID = ?';
-//         connection.query(sql,[password,userName,email,company,authority,personalID,department,userID],function(err,results){
-//             if(err) console.log("err : "+err);
-//             console.log(results);
-//             res.json(results);
-//             res.render('edit', {results: results});
-//         });
-// });
-
-// router.post('/update', async (req, res, next) => {
-//     let userID = req.body.userID;
-//         let password = req.body.password;
-//         let userName = req.body.userName;
-//         let email = req.body.email;
-//         const company = req.body.company;
-//         const authority = req.body.authority;
-//         const personalID = req.body.personalID;
-//         const department = req.body.department;
-//         const active = req.body.active;
-//         User.update({                 // update
-//             password:'password',
-//           }, {
-//             where:{userID:userID}
-//           });
-// });
-
-// router.post('/update', async (req, res, next) => {
-//     let userID = req.body.userID;
-//     let password = req.body.password;
-//     let userName = req.body.userName;
-//     let email = req.body.email;
-//     const company = req.body.company;
-//     const authority = req.body.authority;
-//     const personalID = req.body.personalID;
-//     const department = req.body.department;
-//     const active = req.body.active;
-
-//     User.findOne({where: {userID: userID}})
-//     if (!empty(userID)) {
-//         User.update({
-//             userID: userID, 
-//             password: password,
-//             userName:userName,
-//             email:email,
-//             company:company,
-//             authority:authority,
-//             personalID:personalID,
-//             department:department,
-//             active:active,
-//         })
-//             .then(result => {
-//                 res.json(result);
-//             })
-//             .catch(err => {
-//                 console.error(err);
-//             });
-//     } else {
-//         res.json({result: false, error: null, data: null});
-//     }
-// });
 
 router.post('/delete', async (req, res, next) => {
     let userID = req.body.userID;
