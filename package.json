@@ -21,7 +21,7 @@
     "express-session": "^1.17.2",
     "is-empty": "^1.2.0",
     "json-stringify-pretty-compact": "^3.0.0",
-    "mongoose": "5.13.5",
+    "mongoose": "^6.0.8",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.0",
     "sequelize": "^6.6.5"
