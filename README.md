@@ -49,6 +49,7 @@ or
 
 CREATE DATABASE test DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root'
 
 ## data sql 쿼리
 
