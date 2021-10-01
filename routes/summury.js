@@ -26,6 +26,8 @@ const { systems } = require('../models');
 const { subsystem } = require('../models');
 const { discipline } = require('../models');
 const { punchlist } = require('../models');
+const { unit } = require('../models');
+const { area } = require('../models');
 
 const { Op, where } = require("sequelize");
 
@@ -137,6 +139,38 @@ router.get('/discipline', (req, res) => {
         res.json({error: null}
     )});
 })
+
+router.get('/unit', (req, res) => {
+    unit.findAll({
+        attributes: [ 'unit', 'unitName']
+        // where: { id: [1]}
+    })
+    .then(result => {
+        // res.json({"data":result, test: "test", error: null})
+        console.log(result.body)
+        res.json(result)
+    })
+    .catch(err => {
+        console.error(err);
+        res.json({error: null}
+    )});
+})
+router.get('/area', (req, res) => {
+    area.findAll({
+        attributes: [ 'area', 'areaName']
+        // where: { id: [1]}
+    })
+    .then(result => {
+        // res.json({"data":result, test: "test", error: null})
+        console.log(result.body)
+        res.json(result)
+    })
+    .catch(err => {
+        console.error(err);
+        res.json({error: null}
+    )});
+})
+
 
 
 // const sql = 'SELECT * FROM punch.punchlist'
