@@ -327,6 +327,41 @@ router.post('/complete', async (req, res, next) => {
 });
 
 
+router.post('/confirm', async (req, res, next) => {
+    const projectID = req.body.projectID;
+    const punchID = req.body.punchID;
+    const category = req.body.category;
+    const systemID = req.body.systemID;
+    const subsystem = req.body.subsystem;
+    const discipline = req.body.discipline;
+    const status = req.body.status;
+    const unit = req.body.unit;
+    const area = req.body.area;
+    if (!empty(projectID) && !empty(punchID)) {  
+            punchlist.create({
+                projectID: projectID,
+                punchID: punchID,
+                category:category,
+                systemID:systemID,
+                subsystem:subsystem,
+                discipline:discipline,
+                status:status,
+                unit:unit,
+                area:area,
+            })
+                .then(result => {
+                    res.json({result: result, error: null, data: null});
+                })
+                .catch(err => {
+                    console.error(err);
+                    res.json({result: false, error: err, data: null});
+                });
+    } else {
+        res.json({result: false, error: null, data: null});
+    }
+});
+
+
 
 router.use(bodyParser.urlencoded({extended: false}));
 router.use(bodyParser.json());
