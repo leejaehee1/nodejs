@@ -322,6 +322,24 @@ router.put('/list/:id', (req, res) => {
     ).then(res.json({result:"succ!"}))
 })
 
+router.post('/list/create', (req, res) => {
+    const allData = req.body['data'];
+    const targetColumn = req.body['colDefs'];
+    console.log(allData)
+    console.log(targetColumn)
+    PunchList.bulkCreate(
+        allData,
+    //     [{projectID: "aaaaa", 
+    // punchID: "vvvvv"},{projectID: "aaaad", 
+    // punchID: "vvvvd"}  ],
+        {
+            fields: targetColumn
+            // fields: ["projectID", "punchID"]
+        }).then(  res.json({result:"succ!"}))
+        .catch((e)=> (console.log(e)))
+
+})
+
 router.get('/list', (req, res) => {
     const queyRangeString = req.query.range
     const startSetString = queyRangeString.indexOf('[')
