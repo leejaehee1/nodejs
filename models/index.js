@@ -76,5 +76,6 @@ db.Unit = require('./unit')(sequelize, Sequelize);
 db.User = require('./user')(sequelize, Sequelize);
 db.UserComment = require('./userComment')(sequelize, Sequelize);
 db.PunchListLog = require('./punchListLog')(sequelize, Sequelize);
+db.VwPunchHis = require('./vwPunchHis')(sequelize, Sequelize);
 
 module.exports = db;

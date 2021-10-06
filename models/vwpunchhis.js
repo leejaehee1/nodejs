@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('vwpunchhis', {
+    return sequelize.define('vwPunchHis', {
             projectID: {
                 type: DataTypes.CHAR(3),
                 primaryKey: true
@@ -27,6 +27,6 @@ module.exports = (sequelize, DataTypes) => {
         {
             createdAt: false,
             updatedAt: false,
-            tableName: "vwpunchhis"
+            tableName: "vwPunchHis"
         });
 };
