@@ -22,6 +22,7 @@ const { users } = require('../models');
 const { unit } = require('../models');
 const { area } = require('../models');
 const { drawing } = require('../models');
+const { vwpunchhis } = require('../models');
 
 
 const { PunchList } = require('../models');
@@ -48,6 +49,29 @@ router.get('/project', (req, res) => {
         res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
         res.json({result, resultID: "projectID", error: null})
+    })
+    .catch(err => {
+        res.json({error: err}
+    )});
+})
+
+router.get('/vwpunchhis', (req, res) => {
+    const queyRangeString = req.query.range
+    const startSetString = queyRangeString.indexOf('[')
+    const midSetString = queyRangeString.indexOf(',')
+    const endSetString = queyRangeString.indexOf(']')
+    const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
+    const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
+    status.findAll({
+        attributes: [ 'projectID', 'punchID', 'status', 'statusName', 'createdBy', 'createdDate', 'description'],
+        offset: offset,
+        limit: limit,
+    })
+
+    .then(result => {
+        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Access-Control-Expose-Headers', 'Content-Range')
+        res.json({result, resultID: "vwpunchhis", error: null})
     })
     .catch(err => {
         res.json({error: err}
