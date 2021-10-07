@@ -23,6 +23,7 @@ const { unit } = require('../models');
 const { area } = require('../models');
 const { drawing } = require('../models');
 const { vwPunchHis } = require('../models');
+const { progress } = require('../models');
 
 
 const { PunchList } = require('../models');
@@ -214,9 +215,50 @@ router.get('/subsystem', (req, res) => {
     })
 
     .then(result => {
-        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        // res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
         res.json({result, resultID: "subsystem", error: null})
+    })
+    .catch(err => {
+        res.json({error: err}
+    )});
+})
+
+router.get('/progress', (req, res) => {
+    const queyRangeString = req.query.range
+    const startSetString = queyRangeString.indexOf('[')
+    const midSetString = queyRangeString.indexOf(',')
+    const endSetString = queyRangeString.indexOf(']')
+    const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
+    const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
+    progress.findAll({
+        attributes: [ 'projectID', 
+                        'predDate',
+                        'RemainYday',
+                        'IssuedYday',
+                        'IssuedToday',
+                        'IssuedTotal',
+                        'ClosedYday',
+                        'ClosedToday',
+                        'ClosedTotal',
+                        'RemainToday',
+                        'Pending',
+                        'trendIssued',
+                        'trendCompleted',
+                        'trendClosed',
+                        'predict'
+
+
+
+                    ],
+        // offset: offset,
+        // limit: limit,
+    })
+
+    .then(result => {
+        // res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Access-Control-Expose-Headers', 'Content-Range')
+        res.json({result, resultID: "progress", error: null})
     })
     .catch(err => {
         res.json({error: err}
@@ -233,11 +275,11 @@ router.get('/usercode', (req, res) => {
     const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
     users.findAll({
         attributes: [ 'userID', 'password', 'userName', 'email', 'company', 'authority', 'personalID', 'department', 'active'],
-        offset: offset,
-        limit: limit,
+        // offset: offset,
+        // limit: limit,
     })
     .then(result => {
-        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        // res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
         res.json({result, resultID: "userID", error: null})
     })
@@ -256,11 +298,11 @@ router.get('/unit', (req, res) => {
     const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
     unit.findAll({
         attributes: [ 'unit', 'unitName'],
-        offset: offset,
-        limit: limit,
+        // offset: offset,
+        // limit: limit,
     })
     .then(result => {
-        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        // res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
         res.json({result, resultID: "unit", error: null})
     })
@@ -302,11 +344,11 @@ router.get('/drawing', (req, res) => {
     const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
     drawing.findAll({
         attributes: [ 'projectID', 'system', 'subsystem', 'seq', 'drawingNo', 'uploadDate', 'imagePath', 'xSize', 'ySize'],
-        offset: offset,
-        limit: limit,
+        // offset: offset,
+        // limit: limit,
     })
     .then(result => {
-        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        // res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
         res.json({result, resultID: "drawing", error: null})
     })
