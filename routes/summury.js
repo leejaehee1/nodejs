@@ -28,6 +28,7 @@ const { discipline } = require('../models');
 const { punchlist } = require('../models');
 const { unit } = require('../models');
 const { area } = require('../models');
+const { photos } = require('../models');
 
 const { Op, where } = require("sequelize");
 
@@ -298,6 +299,35 @@ router.post('/confirm', async (req, res, next) => {
         res.json({result: false, error: null, data: null});
     }
 });
+
+router.post('/photos', async (req, res, next) => {
+    let punchID = req.body.punchID;
+    let punchStep = req.body.punchStep;
+    let seq = req.body.seq;
+    let localPath = req.body.localPath;
+    let imagePath = req.body.imagePath;
+    let uploaded= req.body.uploaded;
+    let uploadDate = req.body.uploadDate;
+    if (!empty(projectID) && !empty(punchID)) {
+        photos.create({
+            punchID: punchID,
+            punchStep:punchStep,
+            seq:seq,
+            localPath:localPath,
+            imagePath:imagePath,
+            uploaded:uploaded,
+            uploadDate:uploadDate,
+        })
+        .then(result => {
+          res.json(result);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    } else {
+      res.json({result: false, error: null, data: null});
+    }
+  });
 
 
 
