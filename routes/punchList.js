@@ -472,7 +472,8 @@ router.get('/list', (req, res) => {
     // })
     .then(result => {
         // res.header("Content-Range", `getProducts 0-4/${result.length}`);
-        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        // res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Content-Range', `getProducts 0-10000/10000`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
         // res.send(result);
         res.json({result, resultID: "punchID", error: null})
