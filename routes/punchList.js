@@ -185,12 +185,12 @@ router.get('/systems', (req, res) => {
     const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
     systems.findAll({
         attributes: [ 'systemID', 'systemName'],
-        offset: offset,
-        limit: limit,
+        // offset: 1000,
+        // limit: 1000,
     })
 
     .then(result => {
-        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Content-Range', `getProducts 0-1000/1000`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
         res.json({result, resultID: "systemID", error: null})
     })
@@ -209,8 +209,8 @@ router.get('/subsystem', (req, res) => {
     const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
     subsystem.findAll({
         attributes: [ 'subsystem', 'subsystemName'],
-        offset: offset,
-        limit: limit,
+        // offset: offset,
+        // limit: limit,
     })
 
     .then(result => {
