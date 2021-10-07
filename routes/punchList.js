@@ -4,7 +4,6 @@ let bodyParser = require('body-parser'); //body의 json을 파싱해주는 모�
 let dateFormat = require('dateformat'); //날짜형식을 원하는 형태로 바꿔주는 모듈
 let empty = require('is-empty'); //빈값 체크 모듈 *.주의:0도 empty로 판단함
 
-
 const stringify = require("json-stringify-pretty-compact"); //json 값을 문자열로 (보기좋게)변환해주는 모듈
 
 let router = express.Router();
@@ -28,6 +27,11 @@ const { progress } = require('../models');
 
 const { PunchList } = require('../models');
 
+// file upload
+const multer = require("multer");
+let upload = multer({
+    dest: "upload/"
+})
 
 router.use(bodyParser.urlencoded({extended: false}));
 router.use(bodyParser.json());
@@ -162,12 +166,12 @@ router.get('/department', (req, res) => {
     const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
     department.findAll({
         attributes: [ 'department', 'deptName', 'shortName'],
-        offset: offset,
-        limit: limit,
+        // offset: offset,
+        // limit: limit,
     })
 
     .then(result => {
-        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Content-Range', `getProducts 0-1000/1000`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
         res.json({result, resultID: "department", error: null})
     })
@@ -215,7 +219,7 @@ router.get('/subsystem', (req, res) => {
     })
 
     .then(result => {
-        // res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Content-Range', `getProducts 0-1000/1000`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
         res.json({result, resultID: "subsystem", error: null})
     })
@@ -256,8 +260,8 @@ router.get('/progress', (req, res) => {
     })
 
     .then(result => {
-        // res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
-        res.set('Access-Control-Expose-Headers', 'Content-Range')
+        res.set('Content-Range', `getProducts 0-1000/1000`)
+        res.set('Access-Control-Expose-Headers')
         res.json({result, resultID: "progress", error: null})
     })
     .catch(err => {
@@ -279,7 +283,7 @@ router.get('/usercode', (req, res) => {
         // limit: limit,
     })
     .then(result => {
-        // res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Content-Range', `getProducts 0-1000/1000`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
         res.json({result, resultID: "userID", error: null})
     })
@@ -302,7 +306,7 @@ router.get('/unit', (req, res) => {
         // limit: limit,
     })
     .then(result => {
-        // res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Content-Range', `getProducts 0-1000/1000`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
         res.json({result, resultID: "unit", error: null})
     })
@@ -348,9 +352,9 @@ router.get('/drawing', (req, res) => {
         // limit: limit,
     })
     .then(result => {
-        // res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
-        res.json({result, resultID: "drawing", error: null})
+        res.json({result, resultID: "drawingNo", error: null})
     })
     .catch(err => {
         res.json({error: err}
@@ -477,6 +481,19 @@ router.get('/list', (req, res) => {
     .catch(err => {
         res.json({error: null}
     )});
+})
+
+
+router.post('/uploadfile', upload.single("pdffile"), function(req, res, next) {
+    let file = req.file
+
+    // 4. 파일 정보
+    let result = {
+        originalName : file.originalname,
+        size : file.size,
+    }
+
+    res.json(result);
 })
 
 
