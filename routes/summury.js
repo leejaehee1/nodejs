@@ -28,6 +28,7 @@ const { discipline } = require('../models');
 const { punchlist } = require('../models');
 const { unit } = require('../models');
 const { area } = require('../models');
+const { photos } = require('../models');
 
 const { Op, where } = require("sequelize");
 
@@ -59,6 +60,8 @@ router.get('/authority', (req, res) => {
         res.json({error: null}
     )});
 })
+
+
 
 router.get('/department', (req, res) => {
     department.findAll({
@@ -172,20 +175,7 @@ router.get('/area', (req, res) => {
 })
 
 
-
-// const sql = 'SELECT * FROM punch.punchlist'
 const sql = 'SELECT * FROM punch.punchlist as A , punch.category as B, punch.discipline as C, punch.systems as D, punch.subsystem as E'
-// 'SELECT punch.punchlist.issuedBy, punch.punchlist.punchID, punch.punchlist.category,  punch.punchlist.status, punch.punchlist.discipline,punch.punchlist.unit,punch.punchlist.area,punch.punchlist.systemID,punch.punchlist.categoryName,punch.punchlist.disciplineName,punch.punchlist.shortName,punch.punchlist.systemName FROM punch.punchlist as A , punch.category as B, punch.discipline as C, punch.systems as D where A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID'
-
-// connection.connect();
-
-// connection.query('SELECT * FROM punch.punchlist', function(error,results){
-//     if (error){
-//         console.log(error);
-//     }
-//     console.log(results);
-// });
-// connection.end();
 
 router.get('/sqltest', (req, res) => {
     connection.query(sql + ' where A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID and A.subsystemName = E.subsystemName', function(error,results){
@@ -197,24 +187,6 @@ router.get('/sqltest', (req, res) => {
     
 })
 
-
-
-// router.get('/sqlall', (req, res) => {
-    
-//     punchlist.findAll({
-//         attributes: ['issuedBy', `punchID`, `category`,  `status`, 'discipline','unit','area','systemID','categoryName','disciplineName','shortName','systemName']
-//     })
-    
-//     .then(result => {
-//         // res.json({"data":result, test: "test", error: null})
-//         console.log(result.body)
-//         res.json(result)
-//     })
-//     .catch(err => {
-//         console.error(err);
-//         res.json({error: null}
-//     )});
-// })
 router.get('/sqlall', (req, res) => {
     
     connection.query(sql+' where A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID and A.subsystem = E.subsystem', function(error,results){
@@ -224,25 +196,6 @@ router.get('/sqlall', (req, res) => {
         res.json(results);
     });
 })
-
-// router.post('/sqlqc', (req, res) => {
-//     let userID = req.body.userID;
-//     punchlist.findAll({
-//         where:{issuedBy:userID},
-        
-//         attributes: ['issuedBy', `punchID`, `category`,  `status`, 'discipline','unit','area','systemID']
-//     })
-    
-//     .then(result => {
-//         // res.json({"data":result, test: "test", error: null})
-//         console.log(result.body)
-//         res.json(result)
-//     })
-//     .catch(err => {
-//         console.error(err);
-//         res.json({error: null}
-//     )});
-// })
 
 router.post('/sqlqc', (req, res) => {
     let userID = req.body.userID;
@@ -254,59 +207,45 @@ router.post('/sqlqc', (req, res) => {
     });
 })
 
-// router.post('/sqlassi', (req, res) => {
+router.get('/userqc', (req, res) => {
+    connection.query('select userName from punch.users where punch.users.authority =?',['4'], function(error,results){
+        if (error){
+            console.log(error);
+        }
+        res.json(results);
+    });
     
-//     let userID = req.body.userID;
-//     // let category = req.body.category;
-// // punchList.query('SELECT * FROM punchlist as A , category as B, discipline as C, systems as D',
-// // 'where A.category = B.category',
-// // 'and A.discipline = C.discipline',
-// // 'and A.system = D.systems')
-//     punchlist.findAll({
-//         // include: [
-//         //     {
-//         //       model: category,
-          
-//         //     //   attributes: ['category','categoryName'],
-//         //     }
-//         //  ],
-        
-//         where:{
-//             [Op.or]:[
-
-//             {issuedBy:userID},
-
-//             {status:{[Op.or]:[2,5]}}]
-//             ,
-//             // category:category['category'],
-//             // discipline:discipline['discipline'],
-//             // system:systems['systems'],
-//         },
-            
-//         attributes: [ 'issuedBy', `status`, `punchID`, `category`, 'discipline','unit','area','systemID']
-//     })
-    
-//     .then(result => {
-//         // res.json({"data":result, test: "test", error: null})
-//         console.log(result.body)
-//         res.json(result)
-//     })
-//     .catch(err => {
-//         console.error(err);
-//         res.json({error: null}
-//     )});
-// })
-
+})
+const sql2 = ' select *'
+// const sql2 = ' select A.issuedBy, A.punchID, A.category, D.categoryname, A.status, A.discipline, C.disciplineName, A.unit, A.area, A.tagnumber,B.deptname, G.username, E.systemname, F.subsystemname'
+const sql3 = ' from punch.punchlist as A LEFT OUTER JOIN punch.department as B ON A.department = B.department LEFT OUTER JOIN punch.discipline as C ON A.discipline = C.discipline LEFT OUTER JOIN punch.category as D ON A.category = D.category LEFT OUTER JOIN punch.systems as E ON A.systemID = E.systemID LEFT OUTER JOIN punch.subsystem as F ON A.subsystem = F.subsystem LEFT OUTER JOIN punch.users as G ON A.issuedby = G.userID '
 router.post('/sqlassi', (req, res) => {
-    
+    let projectID = req.body.projectID;
     let userID = req.body.userID;
-    connection.query(sql+' where ((status = ? or status = ?) or A.issuedBy = ?) and A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID and A.subsystem = E.subsystem',['2','5',userID], function(error,results){
+    connection.query(sql2+sql3+
+        " where A.projectID = ? and A.issuedby = ? and G.authority = ? and (A.status = ? or A.status = ?)"+
+    " UNION"+sql2+ sql3+" where A.projectID = ? and A.issuedby = ? and G.authority > ?   ",[projectID,userID,'1','2','5',projectID,userID,'1'], function(error,results){
         if (error){
             console.log(error);
         }
         res.json(results);
     });
 })
+
+router.get('/project', (req, res) => {
+    let userID = req.header("userID");
+    connection.query("select A.projectID, A.projectName	from project A, projectuser B where A.activated = ? and A.projectID = B.projectID and B.userID = ? order by startDate DESC limit ?;"
+    ,['1',userID,1], function(error,results){
+        if (error){
+            console.log(error);
+        }
+        res.json(results);
+    });
+    
+})
+
+
+
 
 router.post('/complete', async (req, res, next) => {
   let userID = req.body.userID;
@@ -360,6 +299,35 @@ router.post('/confirm', async (req, res, next) => {
         res.json({result: false, error: null, data: null});
     }
 });
+
+router.post('/photos', async (req, res, next) => {
+    let punchID = req.body.punchID;
+    let punchStep = req.body.punchStep;
+    let seq = req.body.seq;
+    let localPath = req.body.localPath;
+    let imagePath = req.body.imagePath;
+    let uploaded= req.body.uploaded;
+    let uploadDate = req.body.uploadDate;
+    if (!empty(projectID) && !empty(punchID)) {
+        photos.create({
+            punchID: punchID,
+            punchStep:punchStep,
+            seq:seq,
+            localPath:localPath,
+            imagePath:imagePath,
+            uploaded:uploaded,
+            uploadDate:uploadDate,
+        })
+        .then(result => {
+          res.json(result);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    } else {
+      res.json({result: false, error: null, data: null});
+    }
+  });
 
 
 
