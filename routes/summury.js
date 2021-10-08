@@ -35,7 +35,7 @@ const { Op, where } = require("sequelize");
 var mysql = require('mysql');
 var connection = mysql.createConnection({
     host:'127.0.0.1',
-    user: 'hexacon',
+    user: 'root',
     password:'hexacon01',
     database: 'punch',
 });
