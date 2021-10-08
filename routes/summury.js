@@ -296,6 +296,7 @@ router.post('/confirm', async (req, res, next) => {
     const bulkItem = req.body.bulkItem;
     const department = req.body.department;
     const targetDate = req.body.targetDate;
+    const issuedBy = req.body.issuedBy;
     const raisedBy = req.body.raisedBy;
     const designChgReq = req.body.designChgReq;
     const materialReq = req.body.materialReq;
@@ -320,6 +321,7 @@ router.post('/confirm', async (req, res, next) => {
                 bulkItem:bulkItem,
                 department:department,
                 targetDate:targetDate,
+                issuedBy:issuedBy,
                 raisedBy:raisedBy,
                 designChgReq:designChgReq,
                 materialReq:materialReq,
@@ -340,6 +342,68 @@ router.post('/confirm', async (req, res, next) => {
         res.json({result: false, error: null, data: null});
     }
 });
+
+router.post('/draftupdate', async (req, res, next) => {
+    const projectID = req.body.projectID;
+    const punchID = req.body.punchID;
+    const category = req.body.category;
+    const systemID = req.body.systemID;
+    const subsystem = req.body.subsystem;
+    const discipline = req.body.discipline;
+    const status = req.body.status;
+    const unit = req.body.unit;
+    const area = req.body.area;
+    const tagNumber = req.body.tagNumber;
+    const bulkItem = req.body.bulkItem;
+    const department = req.body.department;
+    const targetDate = req.body.targetDate;
+    const issuedBy = req.body.issuedBy;
+    const raisedBy = req.body.raisedBy;
+    const designChgReq = req.body.designChgReq;
+    const materialReq = req.body.materialReq;
+    const issueDescription = req.body.issueDescription;
+    const keyword1 = req.body.keyword1;
+    const keyword2 = req.body.keyword2;
+    const keyword3 = req.body.keyword3;
+    const keyword4 = req.body.keyword4;
+
+    if (!empty(projectID) && !empty(punchID)) {  
+            punchlist.update({
+                projectID: projectID,
+                punchID: punchID,
+                category:category,
+                systemID:systemID,
+                subsystem:subsystem,
+                discipline:discipline,
+                status:status,
+                unit:unit,
+                area:area,
+                tagNumber:tagNumber,
+                bulkItem:bulkItem,
+                department:department,
+                targetDate:targetDate,
+                issuedBy:issuedBy,
+                raisedBy:raisedBy,
+                designChgReq:designChgReq,
+                materialReq:materialReq,
+                issueDescription:issueDescription,
+                keyword1:keyword1,
+                keyword2:keyword2,
+                keyword3:keyword3,
+                keyword4:keyword4
+            }, {where: {projectID: projectID,punchID:punchID}})
+                .then(result => {
+                    res.json({result: result, error: null, data: null});
+                })
+                .catch(err => {
+                    console.error(err);
+                    res.json({result: false, error: err, data: null});
+                });
+    } else {
+        res.json({result: false, error: null, data: null});
+    }
+});
+
 
 router.post('/photos', async (req, res, next) => {
     let punchID = req.body.punchID;
