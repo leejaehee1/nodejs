@@ -12,7 +12,10 @@ const saltRounds = 10;
 
 const {User, Category} = require('../models');
 
-
+const multer = require("multer");
+let upload = multer({
+    dest: "upload/"
+})
 
 
 const stringify = require("json-stringify-pretty-compact"); //json 값을 문자열로 (보기좋게)변환해주는 모듈
@@ -454,6 +457,18 @@ router.post('/loadpunch', async (req, res, next) => {
         res.json(results);
     });
   });
+
+  router.post('/uploadfile', upload.array("imgFile"), function(req, res, next) {
+    let file = req.file
+
+    // 4. 파일 정보
+    let result = {
+        originalName : file.originalname,
+        size : file.size,
+    }
+
+    res.json(result);
+})
 
 
 
