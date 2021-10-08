@@ -265,6 +265,22 @@ router.post('/complete', async (req, res, next) => {
   }
 });
 
+router.post('/uploadphotos', async (req, res, next) => {
+    let punchID = req.body.punchID;
+   
+    if (!empty(punchID)) {
+      photos.update({uploaded:'1'}, {where: {punchID: punchID}})
+        .then(result => {
+          res.json(result);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    } else {
+      res.json({result: false, error: null, data: null});
+    }
+  });
+
 
 router.post('/confirm', async (req, res, next) => {
     const projectID = req.body.projectID;
@@ -276,6 +292,19 @@ router.post('/confirm', async (req, res, next) => {
     const status = req.body.status;
     const unit = req.body.unit;
     const area = req.body.area;
+    const tagNumber = req.body.tagNumber;
+    const bulkItem = req.body.bulkItem;
+    const department = req.body.department;
+    const targetDate = req.body.targetDate;
+    const raisedBy = req.body.raisedBy;
+    const designChgReq = req.body.designChgReq;
+    const materialReq = req.body.materialReq;
+    const issueDescription = req.body.issueDescription;
+    const keyword1 = req.body.keyword1;
+    const keyword2 = req.body.keyword2;
+    const keyword3 = req.body.keyword3;
+    const keyword4 = req.body.keyword4;
+
     if (!empty(projectID) && !empty(punchID)) {  
             punchlist.create({
                 projectID: projectID,
@@ -287,6 +316,18 @@ router.post('/confirm', async (req, res, next) => {
                 status:status,
                 unit:unit,
                 area:area,
+                tagNumber:tagNumber,
+                bulkItem:bulkItem,
+                department:department,
+                targetDate:targetDate,
+                raisedBy:raisedBy,
+                designChgReq:designChgReq,
+                materialReq:materialReq,
+                issueDescription:issueDescription,
+                keyword1:keyword1,
+                keyword2:keyword2,
+                keyword3:keyword3,
+                keyword4:keyword4
             })
                 .then(result => {
                     res.json({result: result, error: null, data: null});
@@ -308,7 +349,7 @@ router.post('/photos', async (req, res, next) => {
     let imagePath = req.body.imagePath;
     let uploaded= req.body.uploaded;
     let uploadDate = req.body.uploadDate;
-    if (!empty(projectID) && !empty(punchID)) {
+    if (!empty(punchID) && !empty(punchStep)) {
         photos.create({
             punchID: punchID,
             punchStep:punchStep,
@@ -327,6 +368,29 @@ router.post('/photos', async (req, res, next) => {
     } else {
       res.json({result: false, error: null, data: null});
     }
+  });
+
+  router.get('/loadphotos', (req, res) => {
+    connection.query("select *	from punch.photos where uploaded=?;"
+    ,['0'], function(error,results){
+        if (error){
+            console.log(error);
+        }
+        res.json(results);
+    });
+    
+})
+
+router.post('/loadpunch', async (req, res, next) => {
+    let punchID = req.body.punchID;
+    let userID = req.body.userID;
+    connection.query("select *	from punch.punchlist where punchID=? and issuedBy=?;"
+    ,[punchID,userID], function(error,results){
+        if (error){
+            console.log(error);
+        }
+        res.json(results);
+    });
   });
 
 
