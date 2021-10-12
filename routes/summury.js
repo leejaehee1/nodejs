@@ -459,12 +459,12 @@ router.post('/loadpunch', async (req, res, next) => {
   });
 
   router.post('/uploadfile', upload.array("imgFile"), function(req, res, next) {
-    let file = req.file
-
+    let files = req.files
+    let path = files.map(img => img.path)
     // 4. 파일 정보
     let result = {
-        originalName : file.originalname,
-        size : file.size,
+        filename : files.origin,
+        size : files.size,
     }
 
     res.json(result);
