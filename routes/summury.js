@@ -237,7 +237,7 @@ router.post('/sqlassi', (req, res) => {
 
 router.get('/project', (req, res) => {
     let userID = req.header("userID");
-    connection.query("select A.projectID, A.projectName	from project A, projectuser B where A.activated = ? and A.projectID = B.projectID and B.userID = ? order by startDate DESC limit ?;"
+    connection.query("select A.projectID, A.projectName	from punch.project A, punch.projectuser B where A.activated = ? and A.projectID = B.projectID and B.userID = ? order by startDate DESC limit ?;"
     ,['1',userID,1], function(error,results){
         if (error){
             console.log(error);
@@ -281,6 +281,7 @@ router.post('/confirm', async (req, res, next) => {
     const area = req.body.area;
     const tagNumber = req.body.tagNumber;
     const bulkItem = req.body.bulkItem;
+    const bulkName = req.body.bulkName;
     const department = req.body.department;
     const targetDate = req.body.targetDate;
     const issuedBy = req.body.issuedBy;
@@ -305,6 +306,7 @@ router.post('/confirm', async (req, res, next) => {
                 area:area,
                 tagNumber:tagNumber,
                 bulkItem:bulkItem,
+                bulkName:bulkName,
                 department:department,
                 targetDate:targetDate,
                 issuedBy:issuedBy,
@@ -341,6 +343,7 @@ router.post('/draftupdate', async (req, res, next) => {
     const area = req.body.area;
     const tagNumber = req.body.tagNumber;
     const bulkItem = req.body.bulkItem;
+    const bulkName = req.body.bulkName;
     const department = req.body.department;
     const targetDate = req.body.targetDate;
     const issuedBy = req.body.issuedBy;
@@ -366,6 +369,7 @@ router.post('/draftupdate', async (req, res, next) => {
                 area:area,
                 tagNumber:tagNumber,
                 bulkItem:bulkItem,
+                bulkName:bulkName,
                 department:department,
                 targetDate:targetDate,
                 issuedBy:issuedBy,
