@@ -17,7 +17,7 @@ const multer = require("multer");
 
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {  // 파일이 업로드될 경로 설정
-		cb(null, 'upload/')
+		cb(null, 'upload/photos')
 	},
 	filename: (req, file, cb) => {	// timestamp를 이용해 새로운 파일명 설정
 		let newFileName =file.originalname
@@ -293,6 +293,7 @@ router.post('/confirm', async (req, res, next) => {
     const department = req.body.department;
     const targetDate = req.body.targetDate;
     const issuedBy = req.body.issuedBy;
+    const issuedDate = req.body.issuedDate;
     const raisedBy = req.body.raisedBy;
     const designChgReq = req.body.designChgReq;
     const materialReq = req.body.materialReq;
@@ -318,6 +319,7 @@ router.post('/confirm', async (req, res, next) => {
                 department:department,
                 targetDate:targetDate,
                 issuedBy:issuedBy,
+                issuedDate:issuedDate,
                 raisedBy:raisedBy,
                 designChgReq:designChgReq,
                 materialReq:materialReq,
@@ -440,6 +442,24 @@ router.post('/photos', async (req, res, next) => {
     } else {
       res.json({result: false, error: null, data: null});
     }
+  });
+
+  router.post('/draftphotos', async (req, res, next) => {
+    let punchID = req.body.punchID;
+ 
+    photos.findAll({
+        attributes: [ 'localPath'],
+        where: { punchID: punchID}
+    })
+    .then(result => {
+        // res.json({"data":result, test: "test", error: null})
+        console.log(result.body)
+        res.json(result)
+    })
+    .catch(err => {
+        console.error(err);
+        res.json({error: null}
+    )});
   });
 
   router.post('/uploadphotos', async (req, res, next) => {
