@@ -4,6 +4,125 @@ let express = require('express');
 let bodyParser = require('body-parser'); //body의 json을 파싱해주는 모듈
 let dateFormat = require('dateformat'); //날짜형식을 원하는 형태로 바꿔주는 모듈
 let empty = require('is-empty'); //빈값 체크 모듈 *.주의:0도 empty로 판단함
+const schedule = require('node-schedule');
+
+
+function getFormatDate(date){
+    var year = date.getFullYear();              //yyyy
+    var month = (1 + date.getMonth());          //M
+    month = month >= 10 ? month : '0' + month;  //month 두자리로 저장
+    var day = date.getDate();                   //d
+    day = day >= 10 ? day : '0' + day;          //day 두자리로 저장
+    return  year + '' + month + '' + day;       //'-' 추가하여 yyyy-mm-dd 형태 생성 가능
+}
+
+// schedule.scheduleJob("1 1 1 * * *", function() {
+schedule.scheduleJob("1 1 1 * * *", function() {
+
+
+    var dateSchedule = new Date();
+    dateSchedule = getFormatDate(dateSchedule);
+    // console.log(new Date());
+    // console.log("매분 5초마다 등장");
+    PunchList.findAll({
+        attributes: [ 
+                'projectID',
+                'punchID',
+                'category',
+                'systemID',
+                'subsystem',
+                'discipline',
+                'status',
+                'unit',
+                'area',
+                'tagNumber',
+                'bulkItem',
+                'bulkName',
+                'department',
+                'targetDate',
+                'issuedDate',
+                'issuedBy',
+                'raisedBy',
+                'completedDate',
+                'completedBy',
+                'confirmedDate',
+                'confirmedBy',
+                'notAcceptedDate',
+                'notAcceptedBy',
+                'closedDate',
+                'closedBy',
+                'scheduleKey',
+                'scheStartDate',
+                'scheFinishDate',
+                'designChgReq',
+                'materialReq',
+                'issueDescription',
+                'completeComment',
+                'notAcceptComment',
+                'difficulty',
+                'scheduleImpact',
+                'costImpact',
+                'keyword1',
+                'keyword2',
+                'keyword3',
+                'keyword4',
+                'drawingNo',
+                ],
+    })
+    .then(res => {
+
+        for (var re of res){
+
+                // console.log(re['issuedBy'])
+                // console.log(res[0]['targetDate'].dateFormat('yyyy-mm-dd'))
+                var dateScheduleDB = res[0]['targetDate'];
+                dateScheduleDB = getFormatDate(dateScheduleDB);
+                if((re['targetDate']-new Date()>86400000*7) && (re['targetDate']-new Date()<86400000*8)){
+                    // if(dateScheduleDB.slice(6, 8))
+                    let email;
+                    users.findAll({
+                        attributes: [ 'userID', 'password', 'userName', 'email', 'company', 'authority', 'personalID', 'department', 'active'],
+                    }).then(results => {
+                        for (var result of results){
+                            if(result[userID]===re['issuedBy']){
+                                email= result['email']
+                            }
+                        }
+                
+                    })
+                    
+                    let punchID = re['punchID'];
+                    let issuedDate = re['issuedDate'];
+                    let closedDate = re['closedDate'];
+                    let issueDescription = re['issueDescription'];
+                    let mailConfig = {
+                        service: 'Naver',
+                        host: 'smtp.naver.com',
+                        port: 587,
+                        auth: {
+                            user: process.env.MAIL_EMAIL,
+                            pass: process.env.MAIL_PASSWORD
+                        }
+                    }
+                    let message = {
+                        from: process.env.MAIL_EMAIL,
+                        to: emails,
+                        subject: 'Status Closed',
+                        html: `<p>The Punch is closed. Thanks for your efforts. <br /> - PunchID : ${punchID}<br /> - Issued Date : ${issuedDate}<br /> - Closed Date : ${closedDate}<br /> - Description : ${issueDescription}</p>`
+                    }
+                    
+                    let transporter = nodemailer.createTransport(mailConfig);
+                    setTimeout(()=>{
+                        console.log(1111)
+                        try{
+                            transporter.sendMail(message)
+                        }catch(e){console.log(e)}
+                    }, 1000)
+                // console.log(res[0]['targetDate'].slice(0, 10).split('-1'))
+            }
+        }
+    })
+  });
 
 const stringify = require("json-stringify-pretty-compact"); //json 값을 문자열로 (보기좋게)변환해주는 모듈
 
