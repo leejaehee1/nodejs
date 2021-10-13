@@ -604,7 +604,17 @@ router.post('/uploadfile', upload.single("pdffile"), function(req, res, next) {
 })
 
 const nodemailer = require('nodemailer')
-router.get('/mail', (req, res) =>{
+router.post('/mail', (req, res) =>{
+    const emails = req.body['data'];
+    const punchID = req.body['punchID'];
+    const issuedDate = req.body['issuedDate'].slice(0, 10);
+    const closedDate = req.body['closedDate'].slice(0, 10);
+    const issueDescription = req.body['issueDescription'];
+    // console.log(emails[0])
+    // console.log(punchID)
+    // console.log(issuedDate)
+    // console.log(closedDate)
+    // console.log(issueDescription)
     let mailConfig = {
         service: 'Naver',
         host: 'smtp.naver.com',
@@ -614,12 +624,11 @@ router.get('/mail', (req, res) =>{
             pass: process.env.MAIL_PASSWORD
         }
     }
-    let a = "panpy Fighting!!"
     let message = {
         from: process.env.MAIL_EMAIL,
-        to: 'aaakch0316@gmail.com',
+        to: emails,
         subject: 'Status Closed',
-        html: `<p>The Punch is closed. Thanks for your efforts. <br /> - PunchID : ${a}<br /> - Issued Date : ${a}<br /> - Closed Date : ${a}<br /> - Description : ${a}</p>`
+        html: `<p>The Punch is closed. Thanks for your efforts. <br /> - PunchID : ${punchID}<br /> - Issued Date : ${issuedDate}<br /> - Closed Date : ${closedDate}<br /> - Description : ${issueDescription}</p>`
     }
     
     let transporter = nodemailer.createTransport(mailConfig);
