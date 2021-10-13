@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.CHAR(3),
                 primaryKey: true
             },
-            system: {
+            systemID: {
                 type: DataTypes.CHAR(4),
                 primaryKey: true
             },

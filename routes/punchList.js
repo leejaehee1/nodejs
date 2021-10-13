@@ -537,7 +537,7 @@ router.get('/drawing', (req, res) => {
     const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
     const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
     drawing.findAll({
-        attributes: [ 'projectID', 'system', 'subsystem', 'seq', 'drawingNo', 'uploadDate', 'imagePath', 'xSize', 'ySize'],
+        attributes: [ 'projectID', 'systemID', 'subsystem', 'seq', 'drawingNo', 'uploadDate', 'imagePath', 'xSize', 'ySize'],
         // offset: offset,
         // limit: limit,
     })
