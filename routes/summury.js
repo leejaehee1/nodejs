@@ -339,6 +339,14 @@ router.post('/confirm', async (req, res, next) => {
     }
 });
 
+function isEmpty(str) {
+    if (typeof str == "undefined" || str == null || str == "") {
+      return null;
+    } else {
+      return str;
+    }
+  }
+
 router.post('/draftupdate', async (req, res, next) => {
     const projectID = req.body.projectID;
     const punchID = req.body.punchID;
@@ -355,6 +363,7 @@ router.post('/draftupdate', async (req, res, next) => {
     const department = req.body.department;
     const targetDate = req.body.targetDate;
     const issuedBy = req.body.issuedBy;
+    const issuedDate = req.body.issuedDate;
     const raisedBy = req.body.raisedBy;
     const designChgReq = req.body.designChgReq;
     const materialReq = req.body.materialReq;
@@ -363,32 +372,34 @@ router.post('/draftupdate', async (req, res, next) => {
     const keyword2 = req.body.keyword2;
     const keyword3 = req.body.keyword3;
     const keyword4 = req.body.keyword4;
-
-    if (!empty(projectID) && !empty(punchID)) {  
+    req.body.keyword4==''?null:req.body.keyword4
+    if (!empty(projectID) && !empty(punchID)) { 
+         
             punchlist.update({
-                projectID: projectID,
-                punchID: punchID,
-                category:category,
-                systemID:systemID,
-                subsystem:subsystem,
-                discipline:discipline,
-                status:status,
-                unit:unit,
-                area:area,
-                tagNumber:tagNumber,
-                bulkItem:bulkItem,
-                bulkName:bulkName,
-                department:department,
-                targetDate:targetDate,
-                issuedBy:issuedBy,
-                raisedBy:raisedBy,
-                designChgReq:designChgReq,
-                materialReq:materialReq,
-                issueDescription:issueDescription,
-                keyword1:keyword1,
-                keyword2:keyword2,
-                keyword3:keyword3,
-                keyword4:keyword4
+                projectID: isEmpty(projectID),
+                punchID: isEmpty(punchID),
+                category:isEmpty(category),
+                systemID:isEmpty(systemID),
+                subsystem:isEmpty(subsystem),
+                discipline:isEmpty(discipline),
+                status:isEmpty(status),
+                unit:isEmpty(unit),
+                area:isEmpty(area),
+                tagNumber:isEmpty(tagNumber),
+                bulkItem:isEmpty(bulkItem),
+                bulkName:isEmpty(bulkName),
+                department:isEmpty(department),
+                targetDate:isEmpty(targetDate),
+                issuedBy:isEmpty(issuedBy),
+                issuedDate:isEmpty(issuedDate),
+                raisedBy:isEmpty(raisedBy),
+                designChgReq:isEmpty(designChgReq),
+                materialReq:isEmpty(materialReq),
+                issueDescription:isEmpty(issueDescription),
+                keyword1:isEmpty(keyword1),
+                keyword2:isEmpty(keyword2),
+                keyword3:isEmpty(keyword3),
+                keyword4:isEmpty(keyword4),
             }, {where: {projectID: projectID,punchID:punchID}})
                 .then(result => {
                     res.json({result: result, error: null, data: null});
@@ -503,8 +514,9 @@ router.post('/login', async (req, res, next) => {
     let password = req.body.password;
     if (!empty(userID) && !empty(password)) {
         User.findOne({where: {userID: userID}})
-            .then(results => {
-                bcrypt.compare(password, results.password, (error, result) => {
+        .then(results => {
+            bcrypt.compare(password, results.password, (error, result) => {
+                if(error){throw error}else{
                     if (result) {
                         req.session.loginData = {userID: userID, password: password};
                         req.session.save(error => {
@@ -517,11 +529,14 @@ router.post('/login', async (req, res, next) => {
                         // res.json(result);
                         res.json({result: false, error: null, data: null});
                     }
-                })
+                }
+                
             })
-            .catch(err => {
-                console.error(err);
-            });
+        })
+        .catch(err => {
+            console.error(err);
+        });
+       
     } else {
         res.json({result: false, error: null, data: null});
     }
@@ -538,6 +553,13 @@ router.post('/register', async (req, res, next) => {
     const department = req.body.department;
     const active = req.body.active;
     if (!empty(userID) && !empty(password)) {
+        if (User.findOne({where: {userID: userID}}) == userID) {
+            res.json({result: false, error: null, data: null});
+            console.log(res.json);
+        }
+
+
+
         bcrypt.hash(password, saltRounds, (error, hash) => {
             password = hash;
             User.create({
