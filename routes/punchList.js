@@ -1,3 +1,4 @@
+require('dotenv').config();
 
 let express = require('express');
 let bodyParser = require('body-parser'); //body의 json을 파싱해주는 모듈
@@ -577,6 +578,34 @@ router.post('/uploadfile', upload.single("pdffile"), function(req, res, next) {
     }
 
     res.json(result);
+})
+
+const nodemailer = require('nodemailer')
+router.get('/mail', (req, res) =>{
+    let mailConfig = {
+        service: 'Naver',
+        host: 'smtp.naver.com',
+        port: 587,
+        auth: {
+            user: process.env.MAIL_EMAIL,
+            pass: process.env.MAIL_PASSWORD
+        }
+    }
+    let message = {
+        from: process.env.MAIL_EMAIL,
+        to: 'aaakch0316@gmail.com',
+        subject: 'aaaaaaaaaa',
+        html: '<p>들어왔나 <br /> 안들어왔나</p>'
+    }
+    
+    let transporter = nodemailer.createTransport(mailConfig);
+    setTimeout(()=>{
+        console.log(1111)
+        try{
+            transporter.sendMail(message)
+        }catch(e){console.log(e)}
+    }, 1000)
+    res.json('aa')
 })
 
 
