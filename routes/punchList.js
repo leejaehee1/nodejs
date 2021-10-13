@@ -1,3 +1,4 @@
+require('dotenv').config();
 
 let express = require('express');
 let bodyParser = require('body-parser'); //body의 json을 파싱해주는 모듈
@@ -23,6 +24,7 @@ const { area } = require('../models');
 const { drawing } = require('../models');
 const { vwPunchHis } = require('../models');
 const { progress } = require('../models');
+const { projectUser } = require('../models');
 
 
 const { PunchList } = require('../models');
@@ -384,6 +386,28 @@ router.get('/area', (req, res) => {
     )});
 })
 
+router.get('/projectuser', (req, res) => {
+    const queyRangeString = req.query.range
+    const startSetString = queyRangeString.indexOf('[')
+    const midSetString = queyRangeString.indexOf(',')
+    const endSetString = queyRangeString.indexOf(']')
+    const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
+    const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
+    projectUser.findAll({
+        attributes: [ 'projectID', 'userID'],
+        offset: offset,
+        limit: limit,
+    })
+    .then(result => {
+        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Access-Control-Expose-Headers', 'Content-Range')
+        res.json({result, resultID: "projectID", error: null})
+    })
+    .catch(err => {
+        res.json({error: err}
+    )});
+})
+
 
 router.get('/drawing', (req, res) => {
     const queyRangeString = req.query.range
@@ -577,6 +601,35 @@ router.post('/uploadfile', upload.single("pdffile"), function(req, res, next) {
     }
 
     res.json(result);
+})
+
+const nodemailer = require('nodemailer')
+router.get('/mail', (req, res) =>{
+    let mailConfig = {
+        service: 'Naver',
+        host: 'smtp.naver.com',
+        port: 587,
+        auth: {
+            user: process.env.MAIL_EMAIL,
+            pass: process.env.MAIL_PASSWORD
+        }
+    }
+    let a = "panpy Fighting!!"
+    let message = {
+        from: process.env.MAIL_EMAIL,
+        to: 'aaakch0316@gmail.com',
+        subject: 'Status Closed',
+        html: `<p>The Punch is closed. Thanks for your efforts. <br /> - PunchID : ${a}<br /> - Issued Date : ${a}<br /> - Closed Date : ${a}<br /> - Description : ${a}</p>`
+    }
+    
+    let transporter = nodemailer.createTransport(mailConfig);
+    setTimeout(()=>{
+        console.log(1111)
+        try{
+            transporter.sendMail(message)
+        }catch(e){console.log(e)}
+    }, 1000)
+    res.json('aa')
 })
 
 
