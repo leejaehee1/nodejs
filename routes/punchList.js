@@ -107,8 +107,9 @@ schedule.scheduleJob("1 1 1 * * *", function() {
                     let message = {
                         from: process.env.MAIL_EMAIL,
                         to: emails,
-                        subject: 'Status Closed',
-                        html: `<p>The Punch is closed. Thanks for your efforts. <br /> - PunchID : ${punchID}<br /> - Issued Date : ${issuedDate}<br /> - Closed Date : ${closedDate}<br /> - Description : ${issueDescription}</p>`
+                        subject: 'The due date for the punch',
+                        html: `<p>The due date for the punch is 1 week away. Please hurry up and complete the punch.
+                        <br /> - PunchID : ${punchID}<br /> - Issued Date : ${issuedDate}<br /> - Closed Date : ${closedDate}<br /> - Description : ${issueDescription}</p>`
                     }
                     
                     let transporter = nodemailer.createTransport(mailConfig);
