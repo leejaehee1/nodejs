@@ -132,6 +132,52 @@ router.get('/discipline', (req, res) => {
     )});
 })
 
+// router.get('/discipline/code', (req, res) => {
+//     // const queyRangeString = req.query.range
+//     // const startSetString = queyRangeString.indexOf('[')
+//     // const midSetString = queyRangeString.indexOf(',')
+//     // const endSetString = queyRangeString.indexOf(']')
+//     // const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
+//     // const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
+//     discipline.findOne({
+//         attributes: [ 'discipline', 'disciplineName', 'shortName'],
+//         // offset: offset,
+//         // limit: limit,
+//     })
+
+//     .then(result => {
+//         // res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+//         // res.set('Access-Control-Expose-Headers', 'Content-Range')
+//         res.json({result, resultID: "discipline", error: null})
+//     })
+//     .catch(err => {
+//         res.json({error: err}
+//     )});
+// })
+
+// router.get('/status/code', (req, res) => {
+//     // const queyRangeString = req.query.range
+//     // const startSetString = queyRangeString.indexOf('[')
+//     // const midSetString = queyRangeString.indexOf(',')
+//     // const endSetString = queyRangeString.indexOf(']')
+//     // const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
+//     // const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
+//     status.findOne({
+//         attributes: [ 'status', 'statusName', 'shortName', 'authority', 'remarks'],
+//         // offset: offset,
+//         // limit: limit,
+//     })
+
+//     .then(result => {
+//         // res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+//         // res.set('Access-Control-Expose-Headers', 'Content-Range')
+//         res.json({result, resultID: "status", error: null})
+//     })
+//     .catch(err => {
+//         res.json({error: err}
+//     )});
+// })
+
 
 router.get('/category', (req, res) => {
     const queyRangeString = req.query.range
@@ -368,6 +414,42 @@ router.put('/list/:id', (req, res) => {
         { status: cateData },
         { where: {punchID: targetID} }
     ).then(res.json({result:"succ!"}))
+})
+
+router.put('/listAccept/:id', (req, res) => {
+    const targetID = req.params.id // url을 넣는다.
+    const cateData = req.body.status
+
+    const curr = new Date();
+    const utc = 
+      curr.getTime() + 
+      (curr.getTimezoneOffset() * 60 * 1000);
+    const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
+    const kr_curr = 
+        new Date(utc + (KR_TIME_DIFF));
+    // console.log(kr_curr)
+    const NAcceptDate = new Date(utc + (KR_TIME_DIFF));
+    // const NAcceptDate = new Date().toISOString().replace('-', '/').split('T')[0].replace('-', '/');
+    const notAcceptedByData = req.body.notAcceptedBy
+    const notAcceptCommentData = req.body.notAcceptedComment
+    const objectToUpdata = { 
+                            status: cateData, 
+                            notAcceptedDate: NAcceptDate, 
+                            notAcceptedBy:notAcceptedByData, 
+                            notAcceptComment:notAcceptCommentData
+                        }
+    // console.log(targetID)  // PC-2-00-MB-MBP-E-01-004
+    // console.log(cateData) // 3
+    // console.log(NAcceptDate)  // 2021-10-12T09:29:21.144Z
+    // console.log(notAcceptedByData)  //testUser
+    // console.log(notAcceptCommentData)
+    // console.log(objectToUpdata)
+    PunchList.update(objectToUpdata,
+        { where: {punchID: targetID} }
+    )
+    // .then(console.log(res))
+    .then(res.json({result:"succ!"}))
+    .catch(console.log('error'))
 })
 
 router.post('/list/create', (req, res) => {

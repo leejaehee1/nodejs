@@ -47,6 +47,9 @@ module.exports = (sequelize, DataTypes) => {
             targetDate: {
                 type: DataTypes.DATE
             },
+            notAcceptedDate: {
+                type: DataTypes.DATE
+            },
             issuedDate: {
                 type: DataTypes.DATE
             },
@@ -54,6 +57,9 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.CHAR(12)
             },
             raisedBy: {
+                type: DataTypes.CHAR(12)
+            },
+            notAcceptedBy: {
                 type: DataTypes.CHAR(12)
             },
             completedDate: {
