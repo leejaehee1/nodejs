@@ -13,10 +13,18 @@ const saltRounds = 10;
 const {User, Category} = require('../models');
 
 const multer = require("multer");
-let upload = multer({
-    dest: "upload/"
-})
+// const upload = multer({ dest: 'uploads/' })
 
+const storage = multer.diskStorage({
+	destination: (req, file, cb) => {  // 파일이 업로드될 경로 설정
+		cb(null, 'upload/')
+	},
+	filename: (req, file, cb) => {	// timestamp를 이용해 새로운 파일명 설정
+		let newFileName =file.originalname
+		cb(null, newFileName)
+	},
+})
+const upload = multer({ storage: storage })
 
 const stringify = require("json-stringify-pretty-compact"); //json 값을 문자열로 (보기좋게)변환해주는 모듈
 
@@ -464,13 +472,13 @@ router.post('/loadpunch', async (req, res, next) => {
 
   router.post('/uploadfile', upload.array("imgFile"), function(req, res, next) {
     let files = req.files
-    let path = files.map(img => img.path)
+    let path = files.map(img =>img.originalname)
     // 4. 파일 정보
     let result = {
-        filename : files.origin,
+        filename : files.path,
         size : files.size,
     }
-
+console.log(files);
     res.json(result);
 })
 
