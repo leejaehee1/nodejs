@@ -14,7 +14,7 @@ const {User, Category} = require('../models');
 
 const multer = require("multer");
 // const upload = multer({ dest: 'uploads/' })
-
+var fs = require('fs');
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {  // 파일이 업로드될 경로 설정
 		cb(null, 'upload/photos')
@@ -40,7 +40,6 @@ const { punchlist } = require('../models');
 const { unit } = require('../models');
 const { area } = require('../models');
 const { photos } = require('../models');
-
 const { Op, where } = require("sequelize");
 
 var mysql = require('mysql');
@@ -374,7 +373,6 @@ router.post('/draftupdate', async (req, res, next) => {
     const keyword2 = req.body.keyword2;
     const keyword3 = req.body.keyword3;
     const keyword4 = req.body.keyword4;
-    req.body.keyword4==''?null:req.body.keyword4
     if (!empty(projectID) && !empty(punchID)) { 
          
             punchlist.update({
@@ -444,11 +442,11 @@ router.post('/photos', async (req, res, next) => {
     }
   });
 
-  router.post('/draftphotos', async (req, res, next) => {
+  router.post('/photospath', async (req, res, next) => {
     let punchID = req.body.punchID;
  
     photos.findAll({
-        attributes: [ 'localPath'],
+        attributes: [ 'localPath','imagePath'],
         where: { punchID: punchID}
     })
     .then(result => {
@@ -460,6 +458,37 @@ router.post('/photos', async (req, res, next) => {
         console.error(err);
         res.json({error: null}
     )});
+  });
+
+//   router.post('/photosload', async (req, res, next) => {
+//     let imagePath = req.body.imagePath;
+//     let userID = req.header("userID");
+//     fs.readFile(imagePath,              //파일 읽기
+//         function (err, data)
+//         {
+//             res.writeHead(200, { "Context-Type": "image/png" });//보낼 헤더를 만듬
+//             res.write(data);
+//             // res.json(data) ;  //본문을 만들고
+//             res.end();  //클라이언트에게 응답을 전송한다
+
+//         }
+//     );
+//   });
+
+router.get('/photosload', async (req, res, next) => {
+    let imagePath = req.header('imagePath');
+    // let userID = req.header("userID");
+    fs.readFile(imagePath,              //파일 읽기
+        function (err, data)
+        {
+            res.writeHead(200, { "Context-Type": "image/png" });//보낼 헤더를 만듬
+            res.write(data);
+            // res.json(data) ;  //본문을 만들고
+            res.end();  //클라이언트에게 응답을 전송한다
+            console.log(data);
+        }
+    );
+    
   });
 
   router.post('/uploadphotos', async (req, res, next) => {
@@ -512,7 +541,6 @@ router.post('/loadpunch', async (req, res, next) => {
 console.log(files);
     res.json(result);
 })
-
 
 
 router.use(bodyParser.urlencoded({extended: false}));
