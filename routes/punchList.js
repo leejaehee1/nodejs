@@ -159,7 +159,8 @@ let storage = multer.diskStorage({
         cb(null, "upload/drawings/pdfs/")
     },
     filename: function (req, file, cb) {
-        cb(null, file.originalname + '-' + Date.now() + '.png')
+        // cb(null, file.originalname + '-' + Date.now() + '.png')
+        cb(null, file.originalname + '.png')
     }
 })
 // let upload = multer({
