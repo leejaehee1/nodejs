@@ -442,6 +442,39 @@ router.post('/photos', async (req, res, next) => {
     }
   });
 
+  router.post('/photosupdate', async (req, res, next) => {
+    let punchID = req.body.punchID;
+    let punchStep = req.body.punchStep;
+    let seq = req.body.seq;
+    let localPath = req.body.localPath;
+    let imagePath = req.body.imagePath;
+    let uploaded= req.body.uploaded;
+    let uploadDate = req.body.uploadDate;
+    if (!empty(punchID) && !empty(punchStep)) {
+        photos.update({    
+            punchID: punchID,
+            punchStep:punchStep,
+            seq:seq,
+            localPath:localPath,
+            imagePath:imagePath,
+            uploaded:uploaded,
+            uploadDate:uploadDate,
+        }, {where: {punchID:punchID,imagePath:imagePath}}
+        )
+        .then(result => {
+          res.json(result);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    } else {
+      res.json({result: false, error: null, data: null});
+    }
+  });
+
+
+
+
   router.post('/photospath', async (req, res, next) => {
     let punchID = req.body.punchID;
  
@@ -481,11 +514,15 @@ router.get('/photosload', async (req, res, next) => {
     fs.readFile(imagePath,              //파일 읽기
         function (err, data)
         {
-            res.writeHead(200, { "Context-Type": "image/png" });//보낼 헤더를 만듬
+            if (err) {
+                console.log(err);
+            }else{  
+                res.writeHead(200, { "Context-Type": "image/png" });//보낼 헤더를 만듬
             res.write(data);
             // res.json(data) ;  //본문을 만들고
             res.end();  //클라이언트에게 응답을 전송한다
-            console.log(data);
+            console.log(data);}
+          
         }
     );
     
