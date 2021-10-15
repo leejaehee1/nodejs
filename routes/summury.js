@@ -754,9 +754,26 @@ router.post('/update', async (req, res, next) => {
 });
 
 router.post('/delete', async (req, res, next) => {
-    let userID = req.body.userID;
-    if (!empty(userID)) {
-        User.destroy({where: {userID: userID}})
+    let projectID = req.body.projectID;
+    let punchID = req.body.punchID;
+    if (!empty(projectID)&&!empty(punchID)) {
+        User.destroy({where: {projectID: projectID,punchID:punchID}})
+            .then(result => {
+                res.json(result);
+            })
+            .catch(err => {
+                console.error(err);
+            });
+    } else {
+        res.json({result: false, error: null, data: null});
+    }
+});
+
+router.post('/deletephotos', async (req, res, next) => {
+    let punchID = req.body.punchID;
+    let seq = parseInt(req.body.seq);
+    if (!empty(punchID)&&!empty(seq)) {
+        photos.destroy({where: {punchID: punchID,seq:seq}})
             .then(result => {
                 res.json(result);
             })
