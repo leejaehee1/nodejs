@@ -4,6 +4,8 @@ let express = require('express');
 let bodyParser = require('body-parser'); //body의 json을 파싱해주는 모듈
 let dateFormat = require('dateformat'); //날짜형식을 원하는 형태로 바꿔주는 모듈
 let empty = require('is-empty'); //빈값 체크 모듈 *.주의:0도 empty로 판단함
+var {fromPath, fromBuffer} = require('pdf2pic');
+var {fromBuffer} = require('pdf2pic');
 const schedule = require('node-schedule');
 
 
@@ -150,10 +152,20 @@ const { projectUser } = require('../models');
 const { PunchList } = require('../models');
 
 // file upload
+
 const multer = require("multer");
-let upload = multer({
-    dest: "upload/"
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, "upload/drawings/pdfs/")
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname + '-' + Date.now() + '.png')
+    }
 })
+// let upload = multer({
+//     dest: "upload/drawings/"
+// })
+let upload = multer({storage:storage});
 
 router.use(bodyParser.urlencoded({extended: false}));
 router.use(bodyParser.json());
@@ -746,16 +758,71 @@ router.get('/list', (req, res) => {
     )});
 })
 
-
+var PDFImage = require("pdf-image").PDFImage;
+var fs = require('fs');
 router.post('/uploadfile', upload.single("pdffile"), function(req, res, next) {
-    let file = req.file
+    // let data = req.
+    // console.log(data)
 
+    let file = req.file
     // 4. 파일 정보
     let result = {
         originalName : file.originalname,
         size : file.size,
     }
+    
+    // upload/drawings/
 
+    // const options = {
+    //     // density: 100,
+    //     saveFilename: "untitled",
+    //     savePath: "./images",
+    //     // savePath: "upload/drawings/pngs/",
+    //     format: "jpg",
+    //     // width: 600,
+    //     // height: 600
+    //   };
+    // var fromPath = require('pdf2pic');
+
+    // const storeAsImage = fromPath("upload/drawings/pdfs/1111-1634176171616.pdf", options);
+    // // const storeAsImage = fromPath("./1111-1634176171616.pdf", options);
+    // const pageToConvertAsImage = 1;
+
+    // storeAsImage(pageToConvertAsImage, true).then((resolve) => {
+    //     console.log("Page 1 is now converted as image");
+      
+    //     return resolve;
+    //   });
+    //   console.log(1)
+    //   var pdfImage = new PDFImage("upload/drawings/pdfs/sampleDrawing.pdf");
+    //   var pdfImage = new PDFImage("./sampleDrawing.pdf");
+    //   console.log(2)
+    //   pdfImage.convertFile().then((imagePath) => {
+          // 0-th page (first page) of the slide.pdf is available as slide-0.png
+        //   res.sendFile(imagePath);
+        //   console.log(3)
+        //   console.log(imagePath)
+    // fs.existsSync("/tmp/slide-0.png") // => true
+    // }).catch(e=> console.log(e));
+
+
+
+    console.log(req.body['projectID'])
+    console.log(req.body['systemID'])
+    console.log(req.body['subsystem'])
+    console.log(req.body['seq'])
+    console.log(req.body['drawingNo'])
+    console.log(req.body['pdffile'])
+    console.log(file.path)
+    console.log( Date.now())
+    drawing.create({
+        projectID : req.body['projectID'],
+        systemID : req.body['systemID'],
+        subsystem : req.body['subsystem'],
+        seq : req.body['seq'],
+        drawingNo : req.body['drawingNo'],
+        imagePath : file.path,
+    })
     res.json(result);
 })
 
@@ -796,6 +863,38 @@ router.post('/mail', (req, res) =>{
     }, 1000)
     res.json('aa')
 })
+
+
+// router.get('/drawingimage', (req, res) => {
+//     const queyRangeString = req.query.range
+//     const startSetString = queyRangeString.indexOf('[')
+//     const midSetString = queyRangeString.indexOf(',')
+//     const endSetString = queyRangeString.indexOf(']')
+//     const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
+//     const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
+//     project.findAll({
+//         attributes: [ 'projectID', 'projectName', 'startDate', 'endDate', 'activated'],
+//         offset: offset,
+//         limit: limit,
+//     })
+
+//     .then(result => {
+//         res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+//         res.set('Access-Control-Expose-Headers', 'Content-Range')
+//         res.json({result, resultID: "projectID", error: null})
+//     })
+//     .catch(err => {
+//         res.json({error: err}
+//     )});
+// })
+router.get('/preview', async (req, res, next)=>{ 
+    const imgUrl = "http://localhost:3000/drawings/pdfs/" ;
+    // result = imgUrl+"저장된 이미지명" //imgUrl+"kitty.png" 
+    result = imgUrl+"#4444-1634252453600.png"; //imgUrl+"kitty.png" 
+    res.send(result); 
+})
+
+
 
 
 
