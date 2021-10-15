@@ -1,5 +1,6 @@
+
 *.jpg
-*.png
+# *.png
 *.pdf
 # Node build artifacts
 node_modules
