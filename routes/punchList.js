@@ -147,6 +147,7 @@ const { drawing } = require('../models');
 const { vwPunchHis } = require('../models');
 const { progress } = require('../models');
 const { projectUser } = require('../models');
+const { photos } = require('../models');
 
 
 const { PunchList } = require('../models');
@@ -827,6 +828,114 @@ router.post('/uploadfile', upload.single("pdffile"), function(req, res, next) {
     res.json(result);
 })
 
+var multipart = require('connect-multiparty');
+var multipartMiddleware = multipart();
+router.post('/updateDetail', multipartMiddleware, function(req, res, next) {
+
+
+    console.log(req.body['punchID'])
+    console.log(req.body['targetDate'])
+    console.log(req.body['designChgReq'])
+    console.log(req.body['materialReq'])
+    console.log(req.body['scheduleImpact'])
+    console.log(req.body['costImpact'])
+    console.log(req.body['keyword1'])
+    console.log(req.body['keyword2'])
+    console.log(req.body['keyword3'])
+    console.log(req.body['keyword4'])
+    console.log(req.body['issueDescription'])
+    console.log(req.body['completeComment'])
+
+    if (req.body['targetDate']!==undefined){
+        PunchList.update(
+            { targetDate: req.body['targetDate'] },
+            { where: {punchID: req.body['punchID']} }
+        )
+        // .then(res.json({result:"targetDatesucc!"}))
+    }
+    if (req.body['designChgReq']!==undefined){
+        PunchList.update(
+            { designChgReq: req.body['designChgReq'] },
+            { where: {punchID: req.body['punchID']} }
+        )
+        // .then(res.json({result:"designChgReqsucc!"}))
+    }
+    if (req.body['materialReq']!==undefined){
+        PunchList.update(
+            { materialReq: req.body['materialReq'] },
+            { where: {punchID: req.body['punchID']} }
+        )
+        // .then(res.json({result:"materialReqReqsucc!"}))
+    }
+    if (req.body['scheduleImpact']!==undefined){
+        PunchList.update(
+            { scheduleImpact: req.body['scheduleImpact'] },
+            { where: {punchID: req.body['punchID']} }
+        )
+        // .then(res.json({result:"scheduleImpactReqsucc!"}))
+    }
+    if (req.body['costImpact']!==undefined){
+        PunchList.update(
+            { costImpact: req.body['costImpact'] },
+            { where: {punchID: req.body['punchID']} }
+        )
+        // .then(res.json({result:"costImpactReqReqsucc!"}))
+    }
+    if (req.body['keyword1']!==undefined){
+        PunchList.update(
+            { keyword1: req.body['keyword1'] },
+            { where: {punchID: req.body['punchID']} }
+        )
+        // .then(res.json({result:"keyword1Reqsucc!"}))
+    }
+    if (req.body['keyword2']!==undefined){
+        PunchList.update(
+            { keyword2: req.body['keyword2'] },
+            { where: {punchID: req.body['punchID']} }
+        )
+        // .then(res.json({result:"keyword2Reqsucc!"}))
+    }
+    if (req.body['keyword3']!==undefined){
+        PunchList.update(
+            { keyword3: req.body['keyword3'] },
+            { where: {punchID: req.body['punchID']} }
+        )
+        // .then(res.json({result:"keyword3Reqsucc!"}))
+    }
+    if (req.body['keyword4']!==undefined){
+        PunchList.update(
+            { keyword4: req.body['keyword4'] },
+            { where: {punchID: req.body['punchID']} }
+        )
+        // .then(res.json({result:"keyword4Reqsucc!"}))
+    }
+    if (req.body['issueDescription']!==undefined){
+        PunchList.update(
+            { issueDescription: req.body['issueDescription'] },
+            { where: {punchID: req.body['punchID']} }
+        )
+        // .then(res.json({result:"issueDescriptionReqsucc!"}))
+    }
+    if (req.body['completeComment']!==undefined){
+        PunchList.update(
+            { completeComment: req.body['completeComment'] },
+            { where: {punchID: req.body['punchID']} }
+        )
+        // .then(res.json({result:"completeCommentReqsucc!"}))
+    }
+    
+
+    // drawing.create({
+    //     projectID : req.body['projectID'],
+    //     systemID : req.body['systemID'],
+    //     subsystem : req.body['subsystem'],
+    //     seq : req.body['seq'],
+    //     drawingNo : req.body['drawingNo'],
+    //     imagePath : file.path,
+    // })
+    res.json('success');
+})
+
 const nodemailer = require('nodemailer')
 router.post('/mail', (req, res) =>{
     const emails = req.body['data'];
@@ -895,6 +1004,28 @@ router.get('/preview', async (req, res, next)=>{
     res.send(result); 
 })
 
+router.get('/photos', (req, res) => {
+    const queyRangeString = req.query.range
+    const startSetString = queyRangeString.indexOf('[')
+    const midSetString = queyRangeString.indexOf(',')
+    const endSetString = queyRangeString.indexOf(']')
+    const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
+    const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
+    photos.findAll({
+        attributes: [ 'punchID', 'punchStep', 'seq', 'localPath', 'imagePath', 'uploaded', 'uploadDate'],
+        offset: offset,
+        limit: limit,
+    })
+
+    .then(result => {
+        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Access-Control-Expose-Headers', 'Content-Range')
+        res.json({result, resultID: "status", error: null})
+    })
+    .catch(err => {
+        res.json({error: err}
+    )});
+})
 
 
 
