@@ -42,11 +42,8 @@ router.post('/login', async (req, res, next) => {
                         req.session.save(error => {
                             if (error) console.log(error)
                         })
-                        res.send(results);
-                        
-                        // res.json(result);
+                        res.json({results, result: true});
                     } else {
-                        // res.json(result);
                         res.json({result: false, error: null, data: null});
                     }
                 })
@@ -54,7 +51,7 @@ router.post('/login', async (req, res, next) => {
             .catch(err => {
                 console.error(err);
             });
-    } else {
+        } else {
         res.json({result: false, error: null, data: null});
     }
 });
