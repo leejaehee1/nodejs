@@ -41,6 +41,7 @@ const { unit } = require('../models');
 const { area } = require('../models');
 const { photos } = require('../models');
 const { drawing } = require('../models');
+const { punchLoc } = require('../models');
 const { Op, where } = require("sequelize");
 
 var mysql = require('mysql');
@@ -513,20 +514,7 @@ router.post('/photos', async (req, res, next) => {
     )});
   });
 
-//   router.post('/photosload', async (req, res, next) => {
-//     let imagePath = req.body.imagePath;
-//     let userID = req.header("userID");
-//     fs.readFile(imagePath,              //파일 읽기
-//         function (err, data)
-//         {
-//             res.writeHead(200, { "Context-Type": "image/png" });//보낼 헤더를 만듬
-//             res.write(data);
-//             // res.json(data) ;  //본문을 만들고
-//             res.end();  //클라이언트에게 응답을 전송한다
 
-//         }
-//     );
-//   });
 
 router.get('/photosload', async (req, res, next) => {
     let imagePath = req.header('imagePath');
@@ -566,6 +554,31 @@ router.get('/photosload', async (req, res, next) => {
         }
     );
     
+  });
+
+
+
+  router.post('/drawingspixel', async (req, res, next) => {
+    let drawingNo = req.body.drawingNo;
+    let punchID = req.body.punchID;
+    let xPixel = req.body.xPixel;
+    let yPixel = req.body.yPixel;
+    if (!empty(punchID) && !empty(drawingNo)) {
+        punchLoc.create({
+            drawingNo:drawingNo,
+            punchID:punchID,
+            xPixel:xPixel,
+            yPixel:yPixel,
+        })
+        .then(result => {
+          res.json(result);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    } else {
+      res.json({result: false, error: null, data: null});
+    }
   });
 
   router.post('/uploadphotos', async (req, res, next) => {
@@ -660,9 +673,11 @@ router.post('/login', async (req, res, next) => {
         })
         .catch(err => {
             console.error(err);
+            res.json({result: false, error: null, data: null});
         });
        
     } else {
+        console.error(err);
         res.json({result: false, error: null, data: null});
     }
 });
