@@ -244,6 +244,26 @@ router.get('/authority', (req, res) => {
     )});
 })
 
+router.get('/userprojectselect', (req, res) => {
+    // const targetUser = req.query.userid
+    const targetUser = 'user2'
+    // console.log(targetUser)
+    projectUser.findAll({
+        attributes: [ 'projectID', 'userID'],
+        where: {
+            userID: targetUser
+        }
+    })
+    .then(result=> {
+        console.log(result)
+        res.json({result, val:true, resultID:'projectID', error:null})
+    })
+    .catch(err => {
+        res.json({error:err})
+    })
+
+})
+
 
 router.get('/discipline', (req, res) => {
     const queyRangeString = req.query.range
@@ -833,18 +853,18 @@ var multipartMiddleware = multipart();
 router.post('/updateDetail', multipartMiddleware, function(req, res, next) {
 
 
-    console.log(req.body['punchID'])
-    console.log(req.body['targetDate'])
-    console.log(req.body['designChgReq'])
-    console.log(req.body['materialReq'])
-    console.log(req.body['scheduleImpact'])
-    console.log(req.body['costImpact'])
-    console.log(req.body['keyword1'])
-    console.log(req.body['keyword2'])
-    console.log(req.body['keyword3'])
-    console.log(req.body['keyword4'])
-    console.log(req.body['issueDescription'])
-    console.log(req.body['completeComment'])
+    // console.log(req.body['punchID'])
+    // console.log(req.body['targetDate'])
+    // console.log(req.body['designChgReq'])
+    // console.log(req.body['materialReq'])
+    // console.log(req.body['scheduleImpact'])
+    // console.log(req.body['costImpact'])
+    // console.log(req.body['keyword1'])
+    // console.log(req.body['keyword2'])
+    // console.log(req.body['keyword3'])
+    // console.log(req.body['keyword4'])
+    // console.log(req.body['issueDescription'])
+    // console.log(req.body['completeComment'])
 
     if (req.body['targetDate']!==undefined){
         PunchList.update(
@@ -925,16 +945,9 @@ router.post('/updateDetail', multipartMiddleware, function(req, res, next) {
     }
     
 
-    // drawing.create({
-    //     projectID : req.body['projectID'],
-    //     systemID : req.body['systemID'],
-    //     subsystem : req.body['subsystem'],
-    //     seq : req.body['seq'],
-    //     drawingNo : req.body['drawingNo'],
-    //     imagePath : file.path,
-    // })
     res.json('success');
 })
+
 
 const nodemailer = require('nodemailer')
 router.post('/mail', (req, res) =>{
