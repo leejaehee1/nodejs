@@ -263,10 +263,10 @@ router.post('/complete', async (req, res, next) => {
   let userID = req.body.userID;
   let projectID = req.body.projectID;
   let punchID = req.body.punchID;
-  let description = req.body.description;
+  let completeComment = req.body.completeComment;
   let completedDate = req.body.completedDate;
   if (!empty(projectID) && !empty(punchID)) {
-    punchlist.update({completedDate: completedDate,completeComment:description,completedBy:userID,status:'3'}, 
+    punchlist.update({completedDate: completedDate,completeComment:completeComment,completedBy:userID,status:'3'}, 
     {where: {projectID: projectID, punchID: punchID}})
       .then(result => {
         res.json(result);
@@ -794,15 +794,30 @@ router.post('/draftupdate', async (req, res, next) => {
 router.post('/update', async (req, res, next) => {
     let userID = req.body.userID;
     let password = req.body.password;
+    let userName = req.body.userName;
+    let email = req.body.email;
+    const company = req.body.company;
+    const authority = req.body.authority;
+    const personalID = req.body.personalID;
+    const department = req.body.department;
+
     if (!empty(userID) && !empty(password)) {
         bcrypt.hash(password, saltRounds, (error, hash) => {
             password = hash;
-            User.update({password: password}, {where: {userID: userID}})
+            User.update({
+                password: password,
+                email:email,
+                company:company,
+                userName:userName,
+                authority:authority,
+                personalID:personalID,
+                department:department,}, {where: {userID: userID}})
             .then(result => {
                 res.json(result);
             })
             .catch(err => {
                 console.error(err);
+                res.json({result: false, error: null, data: null});
             });
         })
     } else {
