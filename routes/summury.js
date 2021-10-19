@@ -425,7 +425,7 @@ router.post('/photos', async (req, res, next) => {
     let imagePath = req.body.imagePath;
     let uploaded= req.body.uploaded;
     let uploadDate = req.body.uploadDate;
-    if (!empty(punchID) && !empty(punchStep)) {
+    if (!empty(punchID) && !empty(seq)) {
         photos.create({
             punchID: punchID,
             punchStep:punchStep,
@@ -434,7 +434,9 @@ router.post('/photos', async (req, res, next) => {
             imagePath:imagePath,
             uploaded:uploaded,
             uploadDate:uploadDate,
-        })
+        }, 
+        
+        )
         .then(result => {
           res.json(result);
         })
