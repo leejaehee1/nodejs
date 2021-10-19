@@ -148,6 +148,7 @@ const { vwPunchHis } = require('../models');
 const { progress } = require('../models');
 const { projectUser } = require('../models');
 const { photos } = require('../models');
+const { punchLoc } = require('../models');
 
 
 const { PunchList } = require('../models');
@@ -221,6 +222,83 @@ router.get('/status', (req, res) => {
     )});
 })
 
+router.get('/punchlic', (req, res) => {
+    const queyRangeString = req.query.range
+    const startSetString = queyRangeString.indexOf('[')
+    const midSetString = queyRangeString.indexOf(',')
+    const endSetString = queyRangeString.indexOf(']')
+    const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
+    const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
+    punchLoc.findAll({
+        attributes: [ 'drawingNo', 'punchID', 'xPixel', 'yPixel'],
+        offset: offset,
+        limit: limit,
+    })
+
+    .then(result => {
+        res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        res.set('Access-Control-Expose-Headers', 'Content-Range')
+        res.json({result, resultID: "drawingNo", error: null})
+    })
+    .catch(err => {
+        res.json({error: err}
+    )});
+})
+
+router.delete('/status', (req, res) => {
+    const queryid = parseInt(JSON.parse(req.query.filter)['id'][0])
+    // const queryid = req.query.filter
+    // console.log(queryid)
+    // console.log(JSON.parse(queryid))
+    // console.log(JSON.parse(queryid)['id'])
+    console.log(queryid)
+    status.destroy({
+        where: {status : queryid}
+        })
+    })
+
+router.put('/status/:id', (req, res) => {
+    const targetID = req.params.id // url을 넣는다.
+    const cateData = req.body
+    console.log(targetID)
+    console.log(cateData)
+    status.update(
+        cateData,
+        { where: {status: targetID} }
+    ).then(res.json({result:"succ!"}))
+})
+
+router.get('/status/:id', (req, res) => {
+    const targetID = req.params.id // url을 넣는다.
+    console.log(targetID)
+    status.findAll(
+        { where: {status: targetID} }
+    ).then(result => {
+        // res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        // res.set('Access-Control-Expose-Headers', 'Content-Range')
+        res.json({result, resultID: "status", error: null})
+    })
+})
+
+// drawing.create({
+//     projectID : req.body['projectID'],
+//     systemID : req.body['systemID'],
+//     subsystem : req.body['subsystem'],
+//     seq : req.body['seq'],
+//     drawingNo : req.body['drawingNo'],
+//     imagePath : file.path,
+// })
+
+router.post('/status', (req, res) => {
+    // const targetID = req.params.id // url을 넣는다.
+    const cateData = req.body
+    // console.log(targetID)
+    console.log(cateData)
+    status.create(
+        cateData,
+    ).then(res.json({result:"succ!"}))
+})
+
 router.get('/authority', (req, res) => {
     const queyRangeString = req.query.range
     const startSetString = queyRangeString.indexOf('[')
@@ -245,8 +323,8 @@ router.get('/authority', (req, res) => {
 })
 
 router.get('/userprojectselect', (req, res) => {
-    // const targetUser = req.query.userid
-    const targetUser = 'user2'
+    const targetUser = req.query.userid
+    // const targetUser = 'user2'
     // console.log(targetUser)
     projectUser.findAll({
         attributes: [ 'projectID', 'userID'],
@@ -851,20 +929,6 @@ router.post('/uploadfile', upload.single("pdffile"), function(req, res, next) {
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
 router.post('/updateDetail', multipartMiddleware, function(req, res, next) {
-
-
-    // console.log(req.body['punchID'])
-    // console.log(req.body['targetDate'])
-    // console.log(req.body['designChgReq'])
-    // console.log(req.body['materialReq'])
-    // console.log(req.body['scheduleImpact'])
-    // console.log(req.body['costImpact'])
-    // console.log(req.body['keyword1'])
-    // console.log(req.body['keyword2'])
-    // console.log(req.body['keyword3'])
-    // console.log(req.body['keyword4'])
-    // console.log(req.body['issueDescription'])
-    // console.log(req.body['completeComment'])
 
     if (req.body['targetDate']!==undefined){
         PunchList.update(
