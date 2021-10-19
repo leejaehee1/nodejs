@@ -263,9 +263,11 @@ router.post('/complete', async (req, res, next) => {
   let userID = req.body.userID;
   let projectID = req.body.projectID;
   let punchID = req.body.punchID;
+  let description = req.body.description;
   let completedDate = req.body.completedDate;
   if (!empty(projectID) && !empty(punchID)) {
-    punchlist.update({completedDate: completedDate,completedBy:userID,status:'3'}, {where: {projectID: projectID, punchID: punchID}})
+    punchlist.update({completedDate: completedDate,completeComment:description,completedBy:userID,status:'3'}, 
+    {where: {projectID: projectID, punchID: punchID}})
       .then(result => {
         res.json(result);
       })
@@ -812,7 +814,7 @@ router.post('/delete', async (req, res, next) => {
     let projectID = req.body.projectID;
     let punchID = req.body.punchID;
     if (!empty(projectID)&&!empty(punchID)) {
-        User.destroy({where: {projectID: projectID,punchID:punchID}})
+        punchlist.destroy({where: {projectID: projectID,punchID:punchID}})
             .then(result => {
                 res.json(result);
             })
