@@ -1015,16 +1015,23 @@ router.post('/updateDetail', multipartMiddleware, function(req, res, next) {
 
 const nodemailer = require('nodemailer')
 router.post('/mail', (req, res) =>{
+    console.log(1)
+    console.log(1)
+    console.log(1)
+    console.log(1)
+    console.log(1)
+    console.log(1)
+    console.log(1)
     const emails = req.body['data'];
     const punchID = req.body['punchID'];
     const issuedDate = req.body['issuedDate'].slice(0, 10);
     const closedDate = req.body['closedDate'].slice(0, 10);
     const issueDescription = req.body['issueDescription'];
-    // console.log(emails[0])
-    // console.log(punchID)
-    // console.log(issuedDate)
-    // console.log(closedDate)
-    // console.log(issueDescription)
+    console.log(emails[0])
+    console.log(punchID)
+    console.log(issuedDate)
+    console.log(closedDate)
+    console.log(issueDescription)
     let mailConfig = {
         service: 'Naver',
         host: 'smtp.naver.com',
