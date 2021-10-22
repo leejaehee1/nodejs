@@ -585,6 +585,26 @@ router.get('/photosload', async (req, res, next) => {
     }
   });
 
+  router.post('/pixelload', async (req, res, next) => {
+    let drawingNo = req.body.drawingNo;
+    let punchID = req.body.punchID;
+    if (!empty(drawingNo) && !empty(punchID)) {
+        punchLoc.findAll({
+            attributes: [ 'xPixel','yPixel'],
+            where: { drawingNo: drawingNo,punchID:punchID}
+        })
+        .then(result => {
+          res.json(result);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    } else {
+      res.json({result: false, error: null, data: null});
+    }
+  });
+
+
   router.post('/uploadphotos', async (req, res, next) => {
     let punchID = req.body.punchID;
 
