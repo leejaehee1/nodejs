@@ -235,7 +235,7 @@ router.post('/sqlassi', (req, res) => {
     let projectID = req.body.projectID;
     let userID = req.body.userID;
     connection.query(sql2+sql3+
-        " where A.projectID = ? and A.issuedby = ? and G.authority = ? and (A.status = ? or A.status = ?)"+
+        " where A.projectID = ? and (A.issuedby = ? or (G.authority = ? and (A.status = ? or A.status = ?)))"+
     " UNION"+sql2+ sql3+" where A.projectID = ? and A.issuedby = ? and G.authority > ?   ",[projectID,userID,'1','2','5',projectID,userID,'1'], function(error,results){
         if (error){
             console.log(error);
