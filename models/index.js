@@ -13,23 +13,6 @@ console.log(env)
 console.log(env)
 const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
-// console.log(config.use_env_variable)
-// console.log(config.use_env_variable)
-// console.log(config.use_env_variable)
-// console.log(config.use_env_variable)
-// console.log(config.use_env_variable)
-// console.log(config.use_env_variable)
-// console.log(config.use_env_variable)
-// console.log(config.use_env_variable)
-// console.log(process.env[config.use_env_variable])
-// console.log(process.env[config.use_env_variable])
-// console.log(process.env[config.use_env_variable])
-// console.log(process.env[config.use_env_variable])
-// console.log(process.env[config.use_env_variable])
-// console.log(process.env[config.use_env_variable])
-// console.log(process.env[config.use_env_variable])
-// console.log(process.env[config.use_env_variable])
-// console.log(process.env[config.use_env_variable])
 let sequelize;
 if (config.use_env_variable) {
     sequelize = new Sequelize(process.env[config.use_env_variable], config, {
@@ -98,6 +81,6 @@ db.Unit = require('./unit')(sequelize, Sequelize);
 db.User = require('./user')(sequelize, Sequelize);
 db.UserComment = require('./userComment')(sequelize, Sequelize);
 db.PunchListLog = require('./punchListLog')(sequelize, Sequelize);
-db.VwPunchHis = require('./vwPunchHis')(sequelize, Sequelize);
+// db.VwPunchHis = require('./vwPunchHis')(sequelize, Sequelize);
 
 module.exports = db;
