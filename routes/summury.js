@@ -190,7 +190,7 @@ router.get('/area', (req, res) => {
 const sql = 'SELECT * FROM punch.punchlist as A , punch.category as B, punch.discipline as C, punch.systems as D, punch.subsystem as E'
 
 router.get('/sqltest', (req, res) => {
-    connection.query(sql + ' where A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID and A.subsystemName = E.subsystemName', function(error,results){
+    connection.query(sql + ' where A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID and A.subsystemName = E.subsystemName order by issuedDate desc', function(error,results){
         if (error){
             console.log(error);
         }
@@ -201,7 +201,7 @@ router.get('/sqltest', (req, res) => {
 
 router.get('/sqlall', (req, res) => {
     
-    connection.query(sql+' where A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID and A.subsystem = E.subsystem', function(error,results){
+    connection.query(sql+' where A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID and A.subsystem = E.subsystem order by issuedDate desc', function(error,results){
         if (error){
             console.log(error);
         }
@@ -211,7 +211,7 @@ router.get('/sqlall', (req, res) => {
 
 router.post('/sqlqc', (req, res) => {
     let userID = req.body.userID;
-    connection.query(sql+' where A.issuedBy=? and A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID and A.subsystem = E.subsystem',[userID], function(error,results){
+    connection.query(sql+' where A.issuedBy=? and A.category = B.category and A.discipline = C.discipline and A.systemID = D.systemID and A.subsystem = E.subsystem order by issuedDate desc',[userID], function(error,results){
         if (error){
             console.log(error);
         }
@@ -235,8 +235,8 @@ router.post('/sqlassi', (req, res) => {
     let projectID = req.body.projectID;
     let userID = req.body.userID;
     connection.query(sql2+sql3+
-        " where A.projectID = ? and A.issuedby = ? and G.authority = ? and (A.status = ? or A.status = ?)"+
-    " UNION"+sql2+ sql3+" where A.projectID = ? and A.issuedby = ? and G.authority > ?   ",[projectID,userID,'1','2','5',projectID,userID,'1'], function(error,results){
+        " where A.projectID = ? and (A.issuedby = ? or (G.authority = ? and (A.status = ? or A.status = ?)))"+
+    " UNION"+sql2+ sql3+" where A.projectID = ? and A.issuedby = ? and G.authority > ? order by issuedDate desc  ",[projectID,userID,'1','2','5',projectID,userID,'1'], function(error,results){
         if (error){
             console.log(error);
         }
@@ -582,6 +582,26 @@ router.get('/photosload', async (req, res, next) => {
       res.json({result: false, error: null, data: null});
     }
   });
+
+  router.post('/pixelload', async (req, res, next) => {
+    let drawingNo = req.body.drawingNo;
+    let punchID = req.body.punchID;
+    if (!empty(drawingNo) && !empty(punchID)) {
+        punchLoc.findAll({
+            attributes: [ 'xPixel','yPixel'],
+            where: { drawingNo: drawingNo,punchID:punchID}
+        })
+        .then(result => {
+          res.json(result);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    } else {
+      res.json({result: false, error: null, data: null});
+    }
+  });
+
 
   router.post('/uploadphotos', async (req, res, next) => {
     let punchID = req.body.punchID;
