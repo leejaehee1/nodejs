@@ -4,15 +4,37 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
+// const env = process.env.NODE_ENV || 'development';
 const env = process.env.NODE_ENV || 'development';
+console.log(env)
+console.log(env)
+console.log(env)
+console.log(env)
+console.log(env)
 const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
-
+// console.log(config.use_env_variable)
+// console.log(config.use_env_variable)
+// console.log(config.use_env_variable)
+// console.log(config.use_env_variable)
+// console.log(config.use_env_variable)
+// console.log(config.use_env_variable)
+// console.log(config.use_env_variable)
+// console.log(config.use_env_variable)
+// console.log(process.env[config.use_env_variable])
+// console.log(process.env[config.use_env_variable])
+// console.log(process.env[config.use_env_variable])
+// console.log(process.env[config.use_env_variable])
+// console.log(process.env[config.use_env_variable])
+// console.log(process.env[config.use_env_variable])
+// console.log(process.env[config.use_env_variable])
+// console.log(process.env[config.use_env_variable])
+// console.log(process.env[config.use_env_variable])
 let sequelize;
 if (config.use_env_variable) {
     sequelize = new Sequelize(process.env[config.use_env_variable], config, {
-        host: "localhost",
-        dialect: "mysql",
+        // host: "punchdtmysql.cr9thxgx1gfp.ap-northeast-2.rds.amazonaws.com",
+        // dialect: "mysql",
         operatorAliases: false,
         pool: {
             max: 5,
@@ -23,8 +45,8 @@ if (config.use_env_variable) {
     });
 } else {
     sequelize = new Sequelize(config.database, config.username, config.password, config, {
-        host: "localhost",
-        dialect: "mysql",
+        // host: "punchdtmysql.cr9thxgx1gfp.ap-northeast-2.rds.amazonaws.com",
+        // dialect: "mysql",
         operatorAliases: false,
         pool: {
             max: 5,

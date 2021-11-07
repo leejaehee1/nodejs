@@ -1,23 +1,23 @@
 {
   "development": {
-    "username": "hexacon",
-    "password": "hexacon01",
+    "username": "root",
+    "password": "root",
     "database": "punch",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
     "username": "root",
-    "password": null,
-    "database": "database_test",
+    "password": "root",
+    "database": "punch",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
+    "username": "hexacon",
+    "password": "hexacon!qw!",
+    "database": "punch",
+    "host": "punchdtmysql.cr9thxgx1gfp.ap-northeast-2.rds.amazonaws.com",
     "dialect": "mysql"
   }
 }

@@ -840,13 +840,9 @@ router.get('/list', (req, res) => {
          offset: offset,
          limit: limit,
     })
-    // .then(result => {
-    //     console.log(result)
 
-    // })
     .then(result => {
-        // res.header("Content-Range", `getProducts 0-4/${result.length}`);
-        // res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
+        console.log(result)
         res.set('Content-Range', `getProducts 0-10000/10000`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
         // res.send(result);
@@ -857,6 +853,7 @@ router.get('/list', (req, res) => {
         res.json({error: null}
     )});
 })
+
 
 var PDFImage = require("pdf-image").PDFImage;
 var fs = require('fs');
