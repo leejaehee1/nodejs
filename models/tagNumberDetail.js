@@ -25,6 +25,6 @@ module.exports = (sequelize, DataTypes) => {
         {
             createdAt: false,
             updatedAt: false,
-            tableName: "tagNumberDetail"
+            tableName: "tagNumberdetail"
         });
 };

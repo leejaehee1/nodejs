@@ -14,6 +14,6 @@ module.exports = (sequelize, DataTypes) => {
         {
             createdAt: false,
             updatedAt: false,
-            tableName: "scheduleDate"
+            tableName: "scheduledate"
         });
 };
