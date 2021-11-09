@@ -147,6 +147,6 @@ module.exports = (sequelize, DataTypes) => {
         {
             createdAt: false,
             updatedAt: false,
-            tableName: "punchListlog"
+            tableName: "punchlistlog"
         });
 };

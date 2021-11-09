@@ -132,7 +132,7 @@ const stringify = require("json-stringify-pretty-compact"); //json 값을 문자
 let router = express.Router();
 
 // testimport DB // king
-const { project } = require('../models');
+const { project, sequelize } = require('../models');
 const { status } = require('../models');
 const { authority } = require('../models');
 const { discipline } = require('../models');
@@ -152,6 +152,9 @@ const { punchLoc } = require('../models');
 
 
 const { PunchList } = require('../models');
+const { PunchListLog } = require('../models');
+// const punchListLog = require('../models/punchListLog');
+
 
 // file upload
 
@@ -173,6 +176,26 @@ let upload = multer({storage:storage});
 router.use(bodyParser.urlencoded({extended: false}));
 router.use(bodyParser.json());
 
+
+router.get('/punchlistlog', (req, res) => {
+    const projectD = req.query.projectid;
+    const punchD = req.query.punchid;
+    PunchListLog.findAll({
+        where: {
+            projectID: projectD,
+            punchID: punchD
+        },
+        attributes: ['projectID', 'punchID', 'status', 'systemDate', 'issuedBy'],
+        order: sequelize.col('systemDate')
+    })
+    .then(result => {
+        // console.log(result)
+        res.json({result, resultID: "punchID", error: null})
+    })
+    .catch(err => {
+        res.json({error: err}
+    )});
+})
 
 router.get('/project', (req, res) => {
     const queyRangeString = req.query.range
@@ -251,7 +274,7 @@ router.delete('/status', (req, res) => {
     // console.log(queryid)
     // console.log(JSON.parse(queryid))
     // console.log(JSON.parse(queryid)['id'])
-    console.log(queryid)
+    // console.log(queryid)
     status.destroy({
         where: {status : queryid}
         })
@@ -260,8 +283,8 @@ router.delete('/status', (req, res) => {
 router.put('/status/:id', (req, res) => {
     const targetID = req.params.id // url을 넣는다.
     const cateData = req.body
-    console.log(targetID)
-    console.log(cateData)
+    // console.log(targetID)
+    // console.log(cateData)
     status.update(
         cateData,
         { where: {status: targetID} }
@@ -270,7 +293,7 @@ router.put('/status/:id', (req, res) => {
 
 router.get('/status/:id', (req, res) => {
     const targetID = req.params.id // url을 넣는다.
-    console.log(targetID)
+    // console.log(targetID)
     status.findAll(
         { where: {status: targetID} }
     ).then(result => {
@@ -293,7 +316,7 @@ router.post('/status', (req, res) => {
     // const targetID = req.params.id // url을 넣는다.
     const cateData = req.body
     // console.log(targetID)
-    console.log(cateData)
+    // console.log(cateData)
     status.create(
         cateData,
     ).then(res.json({result:"succ!"}))
@@ -333,7 +356,7 @@ router.get('/userprojectselect', (req, res) => {
         }
     })
     .then(result=> {
-        console.log(result)
+        // console.log(result)
         res.json({result, val:true, resultID:'projectID', error:null})
     })
     .catch(err => {
@@ -663,9 +686,27 @@ router.get('/drawing', (req, res) => {
     )});
 })
 
+// drawing.create({
+//     projectID : req.body['projectID'],
+//     systemID : req.body['systemID'],
+//     subsystem : req.body['subsystem'],
+//     seq : req.body['seq'],
+//     drawingNo : req.body['drawingNo'],
+//     imagePath : file.path,
+// })
+
 router.put('/list/:id', (req, res) => {
     const targetID = req.params.id // url을 넣는다.
     const cateData = req.body.status
+    const localName = req.body.issuedBy
+    PunchListLog.create({
+        systemDate : new Date(),
+        updateStatus : 1,
+        punchID : targetID,
+        projectID : 'A12',
+        status : cateData,
+        issuedBy : localName
+    })
     PunchList.update(
         { status: cateData },
         { where: {punchID: targetID} }
@@ -683,7 +724,6 @@ router.put('/listAccept/:id', (req, res) => {
     const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
     const kr_curr = 
         new Date(utc + (KR_TIME_DIFF));
-    // console.log(kr_curr)
     const NAcceptDate = new Date(utc + (KR_TIME_DIFF));
     // const NAcceptDate = new Date().toISOString().replace('-', '/').split('T')[0].replace('-', '/');
     const notAcceptedByData = req.body.notAcceptedBy
@@ -700,10 +740,18 @@ router.put('/listAccept/:id', (req, res) => {
     // console.log(notAcceptedByData)  //testUser
     // console.log(notAcceptCommentData)
     // console.log(objectToUpdata)
+    const localName = req.body.issuedBy
+    PunchListLog.create({
+        systemDate : new Date(),
+        updateStatus : 1,
+        punchID : targetID,
+        projectID : 'A12',
+        status : cateData,
+        issuedBy : localName
+    })
     PunchList.update(objectToUpdata,
         { where: {punchID: targetID} }
     )
-    // .then(console.log(res))
     .then(res.json({result:"succ!"}))
     .catch(console.log('error'))
 })
@@ -711,8 +759,7 @@ router.put('/listAccept/:id', (req, res) => {
 router.post('/list/create', (req, res) => {
     const allData = req.body['data'];
     const targetColumn = req.body['colDefs'];
-    console.log(allData)
-    console.log(targetColumn)
+
     PunchList.bulkCreate(
         allData,
     //     [{projectID: "aaaaa", 
@@ -757,34 +804,6 @@ router.get('/vwpunchhis', (req, res) => {
     )});
 })
 
-// router.get('/vwpunchhis', (req, res) => {
-//     console.log('ㅁㅁ들어옴aa')
-//     vwpunchhis.findAll(
-//         {
-//           attributes: [ 
-//                         'projectID', 
-//                         'punchID', 
-//                         'status', 
-//                         'statusName', 
-//                         'createdBy', 
-//                         'createdDate', 
-//                         'description'
-//                     ],
-//         }
-//     )
-//     .then(result => {
-//         // res.set('Content-Range', `getProducts 0-${result.length}/${result.length}`)
-//         // res.set('Access-Control-Expose-Headers', 'Content-Range')
-//         console.log(result);
-//         // res.json({result, resultID: "vwpunchhis", error: null})
-//         res.json({noterror: 'not ero'});
-//     })
-//     .catch(err => {
-//         // res.json({error: err})
-//         console.log('errarea');
-//         res.json({error: 'errrrrrrr'});
-//     });
-// })
 
 router.get('/list', (req, res) => {
     const queyRangeString = req.query.range
@@ -842,7 +861,7 @@ router.get('/list', (req, res) => {
     })
 
     .then(result => {
-        console.log(result)
+        // console.log(result)
         res.set('Content-Range', `getProducts 0-10000/10000`)
         res.set('Access-Control-Expose-Headers', 'Content-Range')
         // res.send(result);
@@ -904,14 +923,14 @@ router.post('/uploadfile', upload.single("pdffile"), function(req, res, next) {
 
 
 
-    console.log(req.body['projectID'])
-    console.log(req.body['systemID'])
-    console.log(req.body['subsystem'])
-    console.log(req.body['seq'])
-    console.log(req.body['drawingNo'])
-    console.log(req.body['pdffile'])
-    console.log(file.path)
-    console.log( Date.now())
+    // console.log(req.body['projectID'])
+    // console.log(req.body['systemID'])
+    // console.log(req.body['subsystem'])
+    // console.log(req.body['seq'])
+    // console.log(req.body['drawingNo'])
+    // console.log(req.body['pdffile'])
+    // console.log(file.path)
+    // console.log( Date.now())
     drawing.create({
         projectID : req.body['projectID'],
         systemID : req.body['systemID'],
@@ -925,8 +944,9 @@ router.post('/uploadfile', upload.single("pdffile"), function(req, res, next) {
 
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
-router.post('/updateDetail', multipartMiddleware, function(req, res, next) {
-
+router.post('/updatedetail', multipartMiddleware, function(req, res, next) {
+    // console.log('req.body')
+    // console.log(req.body)
     if (req.body['targetDate']!==undefined){
         PunchList.update(
             { targetDate: req.body['targetDate'] },
@@ -1010,25 +1030,18 @@ router.post('/updateDetail', multipartMiddleware, function(req, res, next) {
 })
 
 
-const nodemailer = require('nodemailer')
+const nodemailer = require('nodemailer');
 router.post('/mail', (req, res) =>{
-    console.log(1)
-    console.log(1)
-    console.log(1)
-    console.log(1)
-    console.log(1)
-    console.log(1)
-    console.log(1)
     const emails = req.body['data'];
     const punchID = req.body['punchID'];
     const issuedDate = req.body['issuedDate'].slice(0, 10);
     const closedDate = req.body['closedDate'].slice(0, 10);
     const issueDescription = req.body['issueDescription'];
-    console.log(emails[0])
-    console.log(punchID)
-    console.log(issuedDate)
-    console.log(closedDate)
-    console.log(issueDescription)
+    // console.log(emails[0])
+    // console.log(punchID)
+    // console.log(issuedDate)
+    // console.log(closedDate)
+    // console.log(issueDescription)
     let mailConfig = {
         service: 'Naver',
         host: 'smtp.naver.com',
