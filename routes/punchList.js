@@ -945,82 +945,93 @@ router.post('/uploadfile', upload.single("pdffile"), function(req, res, next) {
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
 router.post('/updatedetail', multipartMiddleware, function(req, res, next) {
-    // console.log('req.body')
-    // console.log(req.body)
-    if (req.body['targetDate']!==undefined){
+    console.log('req.body')
+    console.log(req.body)
+    console.log(req.body.body)
+    console.log(req.body['body']['materialReq'])
+    console.log(req.body['body']['completeComment'])
+    if (!(req.body['body']['targetDate']===undefined || req.body['body']['targetDate']===null)){
         PunchList.update(
-            { targetDate: req.body['targetDate'] },
-            { where: {punchID: req.body['punchID']} }
+            { targetDate: req.body['body']['targetDate'] },
+            { where: {punchID: req.body['body']['punchID']} }
         )
         // .then(res.json({result:"targetDatesucc!"}))
     }
-    if (req.body['designChgReq']!==undefined){
+    if (!(req.body['body']['designChgReq']===undefined || req.body['body']['designChgReq']===null)){
+        console.log('designChgReq : ', req.body['body']['designChgReq']);
+
         PunchList.update(
-            { designChgReq: req.body['designChgReq'] },
-            { where: {punchID: req.body['punchID']} }
+            { designChgReq: req.body['body']['designChgReq'] },
+            { where: {punchID: req.body['body']['punchID']} }
         )
         // .then(res.json({result:"designChgReqsucc!"}))
     }
-    if (req.body['materialReq']!==undefined){
+    // console.log('materialReq : ', req.body['body']['body']['materialReq']);
+    if (!(req.body['body']['materialReq']===undefined || req.body['body']['materialReq']===null)){
+        console.log('materialReq : ', req.body['body']['materialReq']);
         PunchList.update(
-            { materialReq: req.body['materialReq'] },
-            { where: {punchID: req.body['punchID']} }
+            { materialReq: req.body['body']['materialReq'] },
+            { where: {punchID: req.body['body']['punchID']} }
         )
         // .then(res.json({result:"materialReqReqsucc!"}))
     }
-    if (req.body['scheduleImpact']!==undefined){
+    if (!(req.body['body']['scheduleImpact']===undefined || req.body['body']['scheduleImpact']===null)){
         PunchList.update(
-            { scheduleImpact: req.body['scheduleImpact'] },
-            { where: {punchID: req.body['punchID']} }
+            { scheduleImpact: req.body['body']['scheduleImpact'] },
+            { where: {punchID: req.body['body']['punchID']} }
         )
         // .then(res.json({result:"scheduleImpactReqsucc!"}))
     }
-    if (req.body['costImpact']!==undefined){
+    if (!(req.body['body']['costImpact']===undefined || req.body['body']['costImpact']===null)){
         PunchList.update(
-            { costImpact: req.body['costImpact'] },
-            { where: {punchID: req.body['punchID']} }
+            { costImpact: req.body['body']['costImpact'] },
+            { where: {punchID: req.body['body']['punchID']} }
         )
         // .then(res.json({result:"costImpactReqReqsucc!"}))
     }
-    if (req.body['keyword1']!==undefined){
+    if (!(req.body['body']['keyword1']===undefined || req.body['body']['keyword1']===null)){
         PunchList.update(
-            { keyword1: req.body['keyword1'] },
-            { where: {punchID: req.body['punchID']} }
+            { keyword1: req.body['body']['keyword1'] },
+            { where: {punchID: req.body['body']['punchID']} }
         )
         // .then(res.json({result:"keyword1Reqsucc!"}))
     }
-    if (req.body['keyword2']!==undefined){
+    if (!(req.body['body']['keyword2']===undefined || req.body['body']['keyword2']===null)){
         PunchList.update(
-            { keyword2: req.body['keyword2'] },
-            { where: {punchID: req.body['punchID']} }
+            { keyword2: req.body['body']['keyword2'] },
+            { where: {punchID: req.body['body']['punchID']} }
         )
         // .then(res.json({result:"keyword2Reqsucc!"}))
     }
-    if (req.body['keyword3']!==undefined){
+    if (!(req.body['body']['keyword3']===undefined || req.body['body']['keyword3']===null)){
         PunchList.update(
-            { keyword3: req.body['keyword3'] },
-            { where: {punchID: req.body['punchID']} }
+            { keyword3: req.body['body']['keyword3'] },
+            { where: {punchID: req.body['body']['punchID']} }
         )
         // .then(res.json({result:"keyword3Reqsucc!"}))
     }
-    if (req.body['keyword4']!==undefined){
+    if (!(req.body['body']['keyword4']===undefined || req.body['body']['keyword4']===null)){
         PunchList.update(
-            { keyword4: req.body['keyword4'] },
-            { where: {punchID: req.body['punchID']} }
+            { keyword4: req.body['body']['keyword4'] },
+            { where: {punchID: req.body['body']['punchID']} }
         )
         // .then(res.json({result:"keyword4Reqsucc!"}))
     }
-    if (req.body['issueDescription']!==undefined){
+    if (!(req.body['body']['issueDescription']===undefined || req.body['body']['issueDescription']===null) ){
+        console.log(req.body['body']['issueDescription']);
+        console.log('req.body[body][issueDescription]');
         PunchList.update(
-            { issueDescription: req.body['issueDescription'] },
-            { where: {punchID: req.body['punchID']} }
+            { issueDescription: req.body['body']['issueDescription'] },
+            { where: {punchID: req.body['body']['punchID']} }
         )
         // .then(res.json({result:"issueDescriptionReqsucc!"}))
     }
-    if (req.body['completeComment']!==undefined){
+    if (!(req.body['body']['completeComment']===undefined || req.body['body']['completeComment']===null)){
+        console.log(req.body['body']['completeComment']);
+        console.log('req.body[body][completeComment]');
         PunchList.update(
-            { completeComment: req.body['completeComment'] },
-            { where: {punchID: req.body['punchID']} }
+            { completeComment: req.body['body']['completeComment'] },
+            { where: {punchID: req.body['body']['punchID']} }
         )
         // .then(res.json({result:"completeCommentReqsucc!"}))
     }
