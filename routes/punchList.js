@@ -597,12 +597,6 @@ router.get('/usercode', (req, res) => {
 
 
 router.get('/unit', (req, res) => {
-    const queyRangeString = req.query.range
-    const startSetString = queyRangeString.indexOf('[')
-    const midSetString = queyRangeString.indexOf(',')
-    const endSetString = queyRangeString.indexOf(']')
-    const offset = Number(queyRangeString.slice(startSetString+1, midSetString))
-    const limit = Number(queyRangeString.slice(midSetString+1, endSetString))
     unit.findAll({
         attributes: [ 'unit', 'unitName'],
         // offset: offset,
@@ -618,6 +612,47 @@ router.get('/unit', (req, res) => {
     )});
 })
 
+
+
+router.post('/unit', (req, res) => {
+    const data = req.body
+    // console.log(data)
+    // console.log(cateData)
+    unit.create(
+        data,
+    )
+    .then(res.json({result:"succ!"}))
+})
+
+
+router.put('/unit', (req, res) => {
+    const data = req.body
+    // console.log(data)
+    // console.log(cateData)
+    unit.update(
+        data.n,
+        { where: data['o'] }
+    )
+    .then(res.json({result:"succ!"}))
+})
+
+router.post('/unit/delete', (req, res) => {
+    const data = req.body
+    console.log(data)
+    // console.log(cateData)
+    unit.destroy(
+        { where: data }
+    )
+    .then(res.json({result:"succ!"}))
+})
+
+
+
+
+// unit.update(
+//     data.n,
+//     { where: data.o }
+// )
 
 router.get('/area', (req, res) => {
     const queyRangeString = req.query.range
